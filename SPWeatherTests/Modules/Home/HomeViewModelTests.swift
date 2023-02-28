@@ -10,7 +10,7 @@ import XCTest
 import CoreData
 
 class HomeViewModelTests: XCTestCase {
-
+    
     var viewModel: HomeViewModel!
     
     var searchData: SearchData!
@@ -21,7 +21,7 @@ class HomeViewModelTests: XCTestCase {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         let config = URLSessionConfiguration.default
         let apiService = WeatherAPIService(urlSession: URLSession.init(configuration: config))
-        let interactor = HomeInteractor.init(service: apiService)
+        let interactor = HomeInteractor(service: apiService)
         viewModel = HomeViewModel.init(interactor: interactor)
         
         let city1 = CityInfo.init()
@@ -38,9 +38,8 @@ class HomeViewModelTests: XCTestCase {
     func testSearchWithCorrectCityName() {
         let expectation = self.expectation(description: "shourd return list homeViewModeItem")
         viewModel.search(query: "Paris")
-        viewModel.didChangeData = { items in
-            XCTAssertTrue(items.count > 0)
-            let firstItem = items.first!
+        viewModel.didUpdateViewState = { state in
+            let firstItem = self.viewModel.dataForCell(at: IndexPath(row: 0, section: 0))
             switch firstItem {
             case .searching(let result):
                 XCTAssertEqual(result.areaName.first!.value, "Paris")
@@ -57,13 +56,12 @@ class HomeViewModelTests: XCTestCase {
     func testSearchWithInCorrectCityName() {
         let expectation = self.expectation(description: "should be return error message")
         viewModel.search(query: "qwe")
-        viewModel.didChangeData = { items in
-            switch items.first! {
+        viewModel.didUpdateViewState = { state in
+            let firstItem = self.viewModel.dataForCell(at: IndexPath(row: 0, section: 0))
+            switch firstItem {
             case .searchFail(let msg):
-                XCTAssertTrue(items.count == 1)
                 XCTAssertEqual(msg, "Unable to find any matching weather location to the query submitted!")
-            default:
-                break
+            default: break
             }
             expectation.fulfill()
         }
@@ -76,22 +74,22 @@ class HomeViewModelTests: XCTestCase {
     }
     
     func testPrepareSearchingViewModelItems() {
-        let viewModelItems = viewModel.prepareSearchingViewModelItems(self.searchData.results)
-        XCTAssertTrue(viewModelItems.isEmpty == false)
+        viewModel.prepareSearchingViewModelItems(self.searchData.results)
+        XCTAssertTrue(viewModel.viewModelItems.isEmpty == false)
     }
     
     func testPrepareSearchFailViewModelItems() {
-        let viewModelItems = viewModel.prepareSearchFailViewModelItems("Test")
-        XCTAssertTrue(viewModelItems.count == 1)
+        viewModel.prepareSearchFailViewModelItems("Test")
+        XCTAssertTrue(viewModel.viewModelItems.count == 1)
     }
     
     func testPrepareSearchHistoryViewModelItemsHaveItems() {
-        let items = viewModel.prepareSearchHistoryViewModelItems(cityList)
-        XCTAssertNotNil(items)
+        viewModel.prepareSearchHistoryViewModelItems(cityList)
+        XCTAssertTrue(viewModel.viewModelItems.isEmpty == false)
     }
     
     func testInitalViewStateCurrentCityListNil() {
-        viewModel.currentCityList = nil
+        viewModel.currentCityList = [CityInfo]()
         viewModel.initalViewState()
         XCTAssertEqual(viewModel.viewState, .empty)
     }
@@ -100,5 +98,13 @@ class HomeViewModelTests: XCTestCase {
         viewModel.currentCityList = cityList
         viewModel.initalViewState()
         XCTAssertEqual(viewModel.viewState, .history)
+    }
+
+    func testResetViewStateExpectedHistoryState() {
+        viewModel.viewModelItems = []
+        viewModel.resetViewState()
+        let actual = viewModel.viewState!
+        let expected = HomeViewState.history
+        XCTAssertEqual(actual, expected)
     }
 }

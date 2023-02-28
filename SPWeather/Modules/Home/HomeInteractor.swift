@@ -33,7 +33,7 @@ class HomeInteractor: HomeInteractorProtocol {
             }
         })
     }
-    
+
     func getCitysLocal() -> [CityInfo] {
         return coredataManager.fetchCityList()
     }

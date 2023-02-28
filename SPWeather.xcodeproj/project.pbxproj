@@ -44,7 +44,6 @@
 		1ACD633429ADA9840021AFCF /* WeatherAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD632D29ADA9840021AFCF /* WeatherAPI.swift */; };
 		1ACD633529ADA9840021AFCF /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD632F29ADA9840021AFCF /* CoreDataManager.swift */; };
 		1ACD633629ADA9840021AFCF /* Entities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD633029ADA9840021AFCF /* Entities.swift */; };
-		1ACD634D29ADB18A0021AFCF /* SPWeatherUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD634C29ADB18A0021AFCF /* SPWeatherUITestsLaunchTests.swift */; };
 		1ACD635729ADB1B10021AFCF /* DebouncerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD635429ADB1B10021AFCF /* DebouncerTests.swift */; };
 		1ACD635829ADB1B10021AFCF /* XCTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD635629ADB1B10021AFCF /* XCTestCase.swift */; };
 		1ACD637A29ADB1D60021AFCF /* HomeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD635C29ADB1D60021AFCF /* HomeViewModelTests.swift */; };
@@ -127,7 +126,6 @@
 		1ACD633029ADA9840021AFCF /* Entities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Entities.swift; sourceTree = "<group>"; };
 		1ACD633B29ADAFE80021AFCF /* SPWeatherTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SPWeatherTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1ACD634829ADB18A0021AFCF /* SPWeatherUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SPWeatherUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		1ACD634C29ADB18A0021AFCF /* SPWeatherUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SPWeatherUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		1ACD635429ADB1B10021AFCF /* DebouncerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebouncerTests.swift; sourceTree = "<group>"; };
 		1ACD635629ADB1B10021AFCF /* XCTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XCTestCase.swift; sourceTree = "<group>"; };
 		1ACD635C29ADB1D60021AFCF /* HomeViewModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewModelTests.swift; sourceTree = "<group>"; };
@@ -376,7 +374,6 @@
 			isa = PBXGroup;
 			children = (
 				1ACD638B29ADB28E0021AFCF /* SPWeatherUITests.swift */,
-				1ACD634C29ADB18A0021AFCF /* SPWeatherUITestsLaunchTests.swift */,
 			);
 			path = SPWeatherUITests;
 			sourceTree = "<group>";
@@ -690,7 +687,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1ACD634D29ADB18A0021AFCF /* SPWeatherUITestsLaunchTests.swift in Sources */,
 				1ACD638C29ADB28E0021AFCF /* SPWeatherUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -857,8 +853,8 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -866,9 +862,12 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = SP.Weather.SPWeather;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -885,8 +884,8 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -894,9 +893,12 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = SP.Weather.SPWeather;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

@@ -18,7 +18,6 @@ class SPWeatherUITests: XCTestCase {
         app.children(matching: .window).element(boundBy: 0).children(matching: .other).element.children(matching: .other).element.children(matching: .other).element.children(matching: .other).element.children(matching: .other).element.children(matching: .other).element.children(matching: .other).element(boundBy: 0).children(matching: .other).element.children(matching: .searchField).element.tap()
                 
         app.searchFields.element.typeText("Paris")
-        
         let tablesQuery = app.tables
         XCTAssertEqual(app.navigationBars.element(boundBy: 0).staticTexts.element.label, "Home")
         
@@ -26,7 +25,6 @@ class SPWeatherUITests: XCTestCase {
         XCTAssertEqual(tablesQuery.children(matching: .cell).element(boundBy: 0).staticTexts.element.label, "Paris, France")
         XCTAssertEqual(tablesQuery.children(matching: .cell).element(boundBy: 1).staticTexts.element.label, "Paris, United States of America")
         XCTAssertEqual(tablesQuery.children(matching: .cell).element(boundBy: 3).staticTexts.element.label, "Paris, United States of America")
-        
         XCTAssertEqual(app.navigationBars.element(boundBy: 0).staticTexts.element.label, "Weather Detail")
         
         let homeButton = app.navigationBars["Weather Detail"].buttons["Home"]

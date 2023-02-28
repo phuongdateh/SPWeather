@@ -80,7 +80,8 @@ class HomeViewControllerTests: XCTestCase {
     
     func testTableCellHasCorrectLabelText() {
         let cell = viewController.tableView(viewController.tableView, cellForRowAt: IndexPath(row: 0, section: 0)) as? HomeTableViewCell
-        switch viewController.viewModelItems?.first! {
+        let item = viewController.viewModel?.dataForCell(at: IndexPath(row: 0, section: 0))!
+        switch item {
         case .searchFail(let msg):
             XCTAssertEqual(cell?.contentLbl.text, msg)
         case .searchHistory(let city):
