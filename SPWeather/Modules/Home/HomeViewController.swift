@@ -45,7 +45,7 @@ class HomeViewController: ViewController {
     }
     
     private func bindings() {
-        viewModel?.didChangeData = { [weak self] in
+        viewModel?.didUpdateViewState = { [weak self] in
             DispatchQueue.main.async { [weak self] in
                 self?.updateView()
             }

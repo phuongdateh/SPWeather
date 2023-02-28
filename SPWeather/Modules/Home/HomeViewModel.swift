@@ -16,7 +16,7 @@ enum HomeViewState {
 }
 
 protocol HomeViewModelInterface {
-    var didChangeData: VoidAction? { get set }
+    var didUpdateViewState: VoidAction? { get set }
     var viewState: HomeViewState! { get set }
 
     func initalViewState()
@@ -30,15 +30,18 @@ protocol HomeViewModelInterface {
 
 class HomeViewModel: HomeViewModelInterface {
     private var interactor: HomeInteractorProtocol
-    private var cityInfoList: [CityInfo]?
-    
-    var viewState: HomeViewState!
-    var didChangeData: VoidAction?
-    var currentCityList: [CityInfo]?
+
+    var viewState: HomeViewState! {
+        didSet {
+            didUpdateViewState?()
+        }
+    }
+    var didUpdateViewState: VoidAction?
+    lazy var currentCityList = [CityInfo]()
     
     init(interactor: HomeInteractorProtocol) {
         self.interactor = interactor
-        self.currentCityList = interactor.getCitysLocal()
+        currentCityList.append(contentsOf: interactor.getCitysLocal())
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(updateCityList),
                        name: NSNotification.Name(rawValue: CustomNotificationName.managedObjectContextDidSave.rawValue), object: nil)
@@ -46,40 +49,24 @@ class HomeViewModel: HomeViewModelInterface {
     
     func createWeatherDetailViewModel(city: String) -> WeatherDetailViewModel {
         let interactor = WeatherDetailInteractor.init(apiService: WeatherAPIService.init())
-        return .init(interactor, city: city)
+        return WeatherDetailViewModel(interactor, city: city)
     }
     
     func resetViewState() {
-//        var viewModelItems = [HomeViewModelItem]()
         guard !interactor.getCitysLocal().isEmpty else {
             viewState = .empty
-            didChangeData?()
             return
         }
         prepareSearchHistoryViewModelItems(interactor.getCitysLocal())
         viewState = .history
-        didChangeData?()
-//        if interactor.getCitysLocal().isEmpty == false {
-////            viewModelItems = prepareSearchHistoryViewModelItems(self.interactor.getCitysLocal())
-//            prepareSearchHistoryViewModelItems(interactor.getCitysLocal())
-//        viewState = .history
-//        } else {
-//            viewState = .empty
-//        }
     }
 
     func search(query: String) {
         guard !query.isEmpty else { return }
-        viewState = .seaching
         interactor.search(cityName: query, successBlock: { [weak self] results in
             self?.prepareSearchingViewModelItems(results)
-//            self.didChangeData?(self.prepareSearchingViewModelItems(results))
-            self?.didChangeData?()
         }, failBlock: { [weak self] errorMessage in
-//            guard let self = self else { return }
-//            self.didChangeData?(self.prepareSearchFailViewModelItems(errorMessage))
             self?.prepareSearchFailViewModelItems(errorMessage)
-            self?.didChangeData?()
         })
     }
 
@@ -98,39 +85,36 @@ class HomeViewModel: HomeViewModelInterface {
 
     func prepareSearchFailViewModelItems(_ message: String) {
         viewModelItems = [HomeViewModelItem.searchFail(message)]
+        viewState = .seaching
     }
     
     func prepareSearchingViewModelItems(_ results: [SearchResult]) {
         viewModelItems = results.map({ result -> HomeViewModelItem in
             return .searching(result)
         })
+        viewState = .seaching
     }
 
     func prepareSearchHistoryViewModelItems(_ cityList: [CityInfo]) {
         viewModelItems = cityList.map({ city -> HomeViewModelItem in
             return .searchHistory(city)
         })
+        viewState = .history
     }
  
     func initalViewState() {
-        if let cityList = self.currentCityList,
-           cityList.isEmpty == false {
-            self.viewState = .history
-//            self.didChangeData?(self.prepareSearchHistoryViewModelItems(cityList))
-            prepareSearchHistoryViewModelItems(cityList)
-            didChangeData?()
-        } else {
+        guard !currentCityList.isEmpty else {
             viewState = .empty
+            return
         }
+        prepareSearchHistoryViewModelItems(currentCityList)
+        viewState = .history
     }
-    
+
     @objc func updateCityList() {
-        self.currentCityList = self.interactor.getCitysLocal()
-        if let cityList = self.currentCityList,
-           cityList.isEmpty == false {
-//            self.didChangeData?(self.prepareSearchHistoryViewModelItems(cityList))
-            prepareSearchHistoryViewModelItems(cityList)
-            didChangeData?()
-        }
+        currentCityList = interactor.getCitysLocal() // Get new local data after user go to Detail Screen
+        guard !currentCityList.isEmpty else { return }
+        prepareSearchHistoryViewModelItems(currentCityList)
+        viewState = .history
     }
 }
