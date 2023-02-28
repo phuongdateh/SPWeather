@@ -7,7 +7,7 @@
 
 import Foundation
 
-typealias VoidAction = () -> Void
+typealias HomeViewStateAction = (HomeViewState) -> Void
 
 enum HomeViewState {
     case seaching
@@ -16,8 +16,7 @@ enum HomeViewState {
 }
 
 protocol HomeViewModelInterface {
-    var didUpdateViewState: VoidAction? { get set }
-    var viewState: HomeViewState! { get set }
+    var didUpdateViewState: HomeViewStateAction? { get set }
 
     func initalViewState()
     func resetViewState()
@@ -33,12 +32,15 @@ class HomeViewModel: HomeViewModelInterface {
 
     var viewState: HomeViewState! {
         didSet {
-            didUpdateViewState?()
+            didUpdateViewState?(self.viewState)
         }
     }
-    var didUpdateViewState: VoidAction?
+    var didUpdateViewState: HomeViewStateAction?
     lazy var currentCityList = [CityInfo]()
-    
+
+    // Debouncer Tool
+    lazy var debouncer = Debouncer(delay: 0.5)
+
     init(interactor: HomeInteractorProtocol) {
         self.interactor = interactor
         currentCityList.append(contentsOf: interactor.getCitysLocal())
@@ -48,10 +50,10 @@ class HomeViewModel: HomeViewModelInterface {
     }
     
     func createWeatherDetailViewModel(city: String) -> WeatherDetailViewModel {
-        let interactor = WeatherDetailInteractor.init(apiService: WeatherAPIService.init())
+        let interactor = WeatherDetailInteractor(apiService: WeatherAPIService())
         return WeatherDetailViewModel(interactor, city: city)
     }
-    
+
     func resetViewState() {
         guard !interactor.getCitysLocal().isEmpty else {
             viewState = .empty
@@ -63,10 +65,12 @@ class HomeViewModel: HomeViewModelInterface {
 
     func search(query: String) {
         guard !query.isEmpty else { return }
-        interactor.search(cityName: query, successBlock: { [weak self] results in
-            self?.prepareSearchingViewModelItems(results)
-        }, failBlock: { [weak self] errorMessage in
-            self?.prepareSearchFailViewModelItems(errorMessage)
+        debouncer.call(action: { [weak self] in
+            self?.interactor.search(cityName: query, successBlock: { [weak self] results in
+                self?.prepareSearchingViewModelItems(results)
+            }, failBlock: { [weak self] errorMessage in
+                self?.prepareSearchFailViewModelItems(errorMessage)
+            })
         })
     }
 

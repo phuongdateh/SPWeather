@@ -25,8 +25,10 @@ final class CoreDataManager {
         self.init(container: container)
         let nc = NotificationCenter.default
         nc.addObserver(forName: NSNotification.Name.NSManagedObjectContextDidSave, object: self.persistentContainer.viewContext, queue: nil) { _ in
-            print("managedObjectContextDidSave")
-            nc.post(name: Notification.Name(rawValue: CustomNotificationName.managedObjectContextDidSave.rawValue), object: nil)
+            NotificationCenter.default.post(
+                name: Notification.Name(rawValue: CustomNotificationName.managedObjectContextDidSave.rawValue),
+                object: nil
+            )
         }
     }
     

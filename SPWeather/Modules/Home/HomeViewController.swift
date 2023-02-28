@@ -25,8 +25,6 @@ class HomeViewController: ViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private var debouncer: Debouncer!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -35,7 +33,6 @@ class HomeViewController: ViewController {
     
     private func setupUI() {
         title = "Home"
-        debouncer = Debouncer(delay: 0.5)
         HomeTableViewCell.registerNib(in: tableView)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 100
@@ -45,24 +42,22 @@ class HomeViewController: ViewController {
     }
     
     private func bindings() {
-        viewModel?.didUpdateViewState = { [weak self] in
+        viewModel?.didUpdateViewState = { [weak self] viewState in
             DispatchQueue.main.async { [weak self] in
-                self?.updateView()
+                self?.updateView(viewState)
             }
         }
         viewModel?.initalViewState()
     }
     
-    private func updateView() {
-        guard let viewModel = self.viewModel else { return }
-        switch viewModel.viewState {
+    private func updateView(_ viewState: HomeViewState) {
+        switch viewState {
         case .empty:
             view.bringSubviewToFront(emptyView)
         case .seaching, .history:
             view.bringSubviewToFront(tableView)
-        default: break
+            tableView.reloadData()
         }
-        tableView.reloadData()
     }
     
     private func pushWeatherDetail(with city: String) {
@@ -76,10 +71,8 @@ class HomeViewController: ViewController {
 extension HomeViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar,
                    textDidChange searchText: String) {
-        debouncer.call(action: { [weak self] in
-            self?.searchBar.showsCancelButton = true
-            self?.viewModel?.search(query: searchText)
-        })
+        self.searchBar.showsCancelButton = true
+        self.viewModel?.search(query: searchText)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
