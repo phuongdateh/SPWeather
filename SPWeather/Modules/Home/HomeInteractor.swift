@@ -18,7 +18,8 @@ class HomeInteractor: HomeInteractorProtocol {
     private var apiService: WeatherApiProtocol?
     private let coredataManager: CoreDataManager
     
-    init(service: WeatherApiProtocol, coredataManager: CoreDataManager = CoreDataManager.init()) {
+    init(service: WeatherApiProtocol,
+         coredataManager: CoreDataManager = CoreDataManager()) {
         self.apiService = service
         self.coredataManager = coredataManager
     }
