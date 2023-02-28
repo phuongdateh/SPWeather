@@ -1,0 +1,257 @@
+
+{
+    "search_api": {
+        "result": [
+            {
+                "areaName": [
+                    {
+                        "value": "Seabrook"
+                    }
+                ],
+                "country": [
+                    {
+                        "value": "United States of America"
+                    }
+                ],
+                "region": [
+                    {
+                        "value": "Louisiana"
+                    }
+                ],
+                "latitude": "30.032",
+                "longitude": "-90.013",
+                "population": "0",
+                "weatherUrl": [
+                    {
+                        "value": "https://www.worldweatheronline.com/v2/weather.aspx?q=30.0317,-90.0133"
+                    }
+                ]
+            },
+            {
+                "areaName": [
+                    {
+                        "value": "Camp Leroy Johnson"
+                    }
+                ],
+                "country": [
+                    {
+                        "value": "United States of America"
+                    }
+                ],
+                "region": [
+                    {
+                        "value": "Louisiana"
+                    }
+                ],
+                "latitude": "30.030",
+                "longitude": "-90.046",
+                "population": "0",
+                "weatherUrl": [
+                    {
+                        "value": "https://www.worldweatheronline.com/v2/weather.aspx?q=30.03,-90.0456"
+                    }
+                ]
+            },
+            {
+                "areaName": [
+                    {
+                        "value": "Lake Oaks"
+                    }
+                ],
+                "country": [
+                    {
+                        "value": "United States of America"
+                    }
+                ],
+                "region": [
+                    {
+                        "value": "Louisiana"
+                    }
+                ],
+                "latitude": "30.027",
+                "longitude": "-90.058",
+                "population": "0",
+                "weatherUrl": [
+                    {
+                        "value": "https://www.worldweatheronline.com/v2/weather.aspx?q=30.0272,-90.0578"
+                    }
+                ]
+            },
+            {
+                "areaName": [
+                    {
+                        "value": "Pontchartrain Beach"
+                    }
+                ],
+                "country": [
+                    {
+                        "value": "United States of America"
+                    }
+                ],
+                "region": [
+                    {
+                        "value": "Louisiana"
+                    }
+                ],
+                "latitude": "30.033",
+                "longitude": "-90.062",
+                "population": "0",
+                "weatherUrl": [
+                    {
+                        "value": "https://www.worldweatheronline.com/v2/weather.aspx?q=30.0331,-90.0619"
+                    }
+                ]
+            },
+            {
+                "areaName": [
+                    {
+                        "value": "Gentilly"
+                    }
+                ],
+                "country": [
+                    {
+                        "value": "United States of America"
+                    }
+                ],
+                "region": [
+                    {
+                        "value": "Louisiana"
+                    }
+                ],
+                "latitude": "30.004",
+                "longitude": "-90.029",
+                "population": "0",
+                "weatherUrl": [
+                    {
+                        "value": "https://www.worldweatheronline.com/v2/weather.aspx?q=30.0036,-90.0286"
+                    }
+                ]
+            },
+            {
+                "areaName": [
+                    {
+                        "value": "Milneburg"
+                    }
+                ],
+                "country": [
+                    {
+                        "value": "United States of America"
+                    }
+                ],
+                "region": [
+                    {
+                        "value": "Louisiana"
+                    }
+                ],
+                "latitude": "30.024",
+                "longitude": "-90.061",
+                "population": "0",
+                "weatherUrl": [
+                    {
+                        "value": "https://www.worldweatheronline.com/v2/weather.aspx?q=30.0242,-90.0611"
+                    }
+                ]
+            },
+            {
+                "areaName": [
+                    {
+                        "value": "East Gentilly"
+                    }
+                ],
+                "country": [
+                    {
+                        "value": "United States of America"
+                    }
+                ],
+                "region": [
+                    {
+                        "value": "Louisiana"
+                    }
+                ],
+                "latitude": "30.024",
+                "longitude": "-89.989",
+                "population": "0",
+                "weatherUrl": [
+                    {
+                        "value": "https://www.worldweatheronline.com/v2/weather.aspx?q=30.0239,-89.9889"
+                    }
+                ]
+            },
+            {
+                "areaName": [
+                    {
+                        "value": "Gentilly Terrace"
+                    }
+                ],
+                "country": [
+                    {
+                        "value": "United States of America"
+                    }
+                ],
+                "region": [
+                    {
+                        "value": "Louisiana"
+                    }
+                ],
+                "latitude": "30.006",
+                "longitude": "-90.053",
+                "population": "0",
+                "weatherUrl": [
+                    {
+                        "value": "https://www.worldweatheronline.com/v2/weather.aspx?q=30.0064,-90.0533"
+                    }
+                ]
+            },
+            {
+                "areaName": [
+                    {
+                        "value": "Lake Terrace"
+                    }
+                ],
+                "country": [
+                    {
+                        "value": "United States of America"
+                    }
+                ],
+                "region": [
+                    {
+                        "value": "Louisiana"
+                    }
+                ],
+                "latitude": "30.028",
+                "longitude": "-90.076",
+                "population": "0",
+                "weatherUrl": [
+                    {
+                        "value": "https://www.worldweatheronline.com/v2/weather.aspx?q=30.0278,-90.0764"
+                    }
+                ]
+            },
+            {
+                "areaName": [
+                    {
+                        "value": "Spanish Fort"
+                    }
+                ],
+                "country": [
+                    {
+                        "value": "United States of America"
+                    }
+                ],
+                "region": [
+                    {
+                        "value": "Louisiana"
+                    }
+                ],
+                "latitude": "30.021",
+                "longitude": "-90.083",
+                "population": "0",
+                "weatherUrl": [
+                    {
+                        "value": "https://www.worldweatheronline.com/v2/weather.aspx?q=30.0208,-90.0825"
+                    }
+                ]
+            }
+        ]
+    }
+}
