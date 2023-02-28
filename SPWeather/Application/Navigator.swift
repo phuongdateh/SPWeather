@@ -31,9 +31,11 @@ extension Navigator {
     func get(segue: Scene) -> UIViewController? {
         switch segue {
         case .home(let viewModel):
-            return HomeViewController.fromNib(ofType: HomeViewController.self, viewModel: viewModel, navigator: self)
+            return HomeViewController(viewModel: viewModel,
+                                      navigator: self)
         case .weatherDetail(let viewModel):
-            return WeatherDetailViewController.fromNib(ofType: WeatherDetailViewController.self, viewModel: viewModel, navigator: self)
+            return WeatherDetailViewController(viewModel: viewModel,
+                                               navigator: self)
         }
     }
     

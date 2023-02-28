@@ -18,7 +18,7 @@
 		1ACD62ED29ADA1B20021AFCF /* Configurations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD62EC29ADA1B20021AFCF /* Configurations.swift */; };
 		1ACD62F129ADA2430021AFCF /* UIViewController+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD62F029ADA2430021AFCF /* UIViewController+Ext.swift */; };
 		1ACD62F329ADA30C0021AFCF /* JSONDecoder+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD62F229ADA30C0021AFCF /* JSONDecoder+Ext.swift */; };
-		1ACD62F529ADA3210021AFCF /* UITableView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD62F429ADA3210021AFCF /* UITableView+Ext.swift */; };
+		1ACD62F529ADA3210021AFCF /* UITableViewCell+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD62F429ADA3210021AFCF /* UITableViewCell+Ext.swift */; };
 		1ACD62F729ADA34B0021AFCF /* CustomNotificationName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD62F629ADA34B0021AFCF /* CustomNotificationName.swift */; };
 		1ACD62FA29ADA35F0021AFCF /* Debouncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD62F929ADA35F0021AFCF /* Debouncer.swift */; };
 		1ACD62FF29ADA4CF0021AFCF /* SPWeather.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD62FD29ADA4CF0021AFCF /* SPWeather.xcdatamodeld */; };
@@ -44,7 +44,6 @@
 		1ACD633429ADA9840021AFCF /* WeatherAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD632D29ADA9840021AFCF /* WeatherAPI.swift */; };
 		1ACD633529ADA9840021AFCF /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD632F29ADA9840021AFCF /* CoreDataManager.swift */; };
 		1ACD633629ADA9840021AFCF /* Entities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD633029ADA9840021AFCF /* Entities.swift */; };
-		1ACD633E29ADAFE80021AFCF /* SPWeatherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD633D29ADAFE80021AFCF /* SPWeatherTests.swift */; };
 		1ACD634D29ADB18A0021AFCF /* SPWeatherUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD634C29ADB18A0021AFCF /* SPWeatherUITestsLaunchTests.swift */; };
 		1ACD635729ADB1B10021AFCF /* DebouncerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD635429ADB1B10021AFCF /* DebouncerTests.swift */; };
 		1ACD635829ADB1B10021AFCF /* XCTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD635629ADB1B10021AFCF /* XCTestCase.swift */; };
@@ -100,7 +99,7 @@
 		1ACD62EC29ADA1B20021AFCF /* Configurations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configurations.swift; sourceTree = "<group>"; };
 		1ACD62F029ADA2430021AFCF /* UIViewController+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Ext.swift"; sourceTree = "<group>"; };
 		1ACD62F229ADA30C0021AFCF /* JSONDecoder+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSONDecoder+Ext.swift"; sourceTree = "<group>"; };
-		1ACD62F429ADA3210021AFCF /* UITableView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Ext.swift"; sourceTree = "<group>"; };
+		1ACD62F429ADA3210021AFCF /* UITableViewCell+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewCell+Ext.swift"; sourceTree = "<group>"; };
 		1ACD62F629ADA34B0021AFCF /* CustomNotificationName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNotificationName.swift; sourceTree = "<group>"; };
 		1ACD62F929ADA35F0021AFCF /* Debouncer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debouncer.swift; sourceTree = "<group>"; };
 		1ACD62FE29ADA4CF0021AFCF /* SPWeather.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SPWeather.xcdatamodel; sourceTree = "<group>"; };
@@ -127,7 +126,6 @@
 		1ACD632F29ADA9840021AFCF /* CoreDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		1ACD633029ADA9840021AFCF /* Entities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Entities.swift; sourceTree = "<group>"; };
 		1ACD633B29ADAFE80021AFCF /* SPWeatherTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SPWeatherTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		1ACD633D29ADAFE80021AFCF /* SPWeatherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SPWeatherTests.swift; sourceTree = "<group>"; };
 		1ACD634829ADB18A0021AFCF /* SPWeatherUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SPWeatherUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1ACD634C29ADB18A0021AFCF /* SPWeatherUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SPWeatherUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		1ACD635429ADB1B10021AFCF /* DebouncerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebouncerTests.swift; sourceTree = "<group>"; };
@@ -257,7 +255,7 @@
 			children = (
 				1ACD62F029ADA2430021AFCF /* UIViewController+Ext.swift */,
 				1ACD62F229ADA30C0021AFCF /* JSONDecoder+Ext.swift */,
-				1ACD62F429ADA3210021AFCF /* UITableView+Ext.swift */,
+				1ACD62F429ADA3210021AFCF /* UITableViewCell+Ext.swift */,
 				1ACD62F629ADA34B0021AFCF /* CustomNotificationName.swift */,
 			);
 			path = Extensions;
@@ -367,7 +365,6 @@
 			children = (
 				1ACD635529ADB1B10021AFCF /* Extensions */,
 				1ACD635329ADB1B10021AFCF /* Helper */,
-				1ACD633D29ADAFE80021AFCF /* SPWeatherTests.swift */,
 				1ACD637829ADB1D60021AFCF /* Mock */,
 				1ACD635929ADB1D60021AFCF /* Modules */,
 				1ACD636829ADB1D60021AFCF /* Services */,
@@ -653,7 +650,7 @@
 				1ACD633129ADA9840021AFCF /* WeatherAPIService.swift in Sources */,
 				1ACD633529ADA9840021AFCF /* CoreDataManager.swift in Sources */,
 				1ACD62F329ADA30C0021AFCF /* JSONDecoder+Ext.swift in Sources */,
-				1ACD62F529ADA3210021AFCF /* UITableView+Ext.swift in Sources */,
+				1ACD62F529ADA3210021AFCF /* UITableViewCell+Ext.swift in Sources */,
 				1ACD62D429AD9E1D0021AFCF /* ViewController.swift in Sources */,
 				1ACD62D029AD9E1D0021AFCF /* AppDelegate.swift in Sources */,
 				1ACD630D29ADA81F0021AFCF /* WeatherDetailInteractor.swift in Sources */,
@@ -678,7 +675,6 @@
 				1ACD638829ADB1D60021AFCF /* WeatherAPIServiceTests.swift in Sources */,
 				1ACD638729ADB1D60021AFCF /* WeatherAPIServiceStubNetworkTests.swift in Sources */,
 				1ACD637F29ADB1D60021AFCF /* WeatherDetailInteractorTests.swift in Sources */,
-				1ACD633E29ADAFE80021AFCF /* SPWeatherTests.swift in Sources */,
 				1ACD638529ADB1D60021AFCF /* SearchRequestTest.swift in Sources */,
 				1ACD635829ADB1B10021AFCF /* XCTestCase.swift in Sources */,
 				1ACD638A29ADB1D60021AFCF /* MockCoreData.swift in Sources */,

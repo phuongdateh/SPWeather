@@ -26,7 +26,7 @@ extension UIViewController {
                                              viewModel: ViewModel,
                                              navigator: Navigator) -> ViewController? {
         let vc = T.init(nibName: T.reuseID, bundle: nil) as? ViewController
-        vc?.viewModel = viewModel
+//        vc?.viewModel = viewModel
         vc?.navigator = navigator
         return vc
     }

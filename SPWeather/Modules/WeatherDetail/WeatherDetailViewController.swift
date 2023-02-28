@@ -8,7 +8,6 @@
 import UIKit
 
 class WeatherDetailViewController: ViewController {
-
     @IBOutlet weak var contentView: UIView!
     @IBOutlet weak var weatherIconImageView: UIImageView!
     @IBOutlet weak var humidityLbl: UILabel!
@@ -19,34 +18,44 @@ class WeatherDetailViewController: ViewController {
     @IBOutlet weak var errorLbl: UILabel!
     
     @IBOutlet weak var loadingView: UIView!
+
+    var viewModel: WeatherDetailViewModelInterface?
+
+    init(viewModel: WeatherDetailViewModelInterface,
+         navigator: Navigator) {
+        self.viewModel = viewModel
+        super.init(nibName: Self.reuseID, bundle: nil)
+        self.navigator = navigator
+    }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.setupUI()
-        self.bindings()
+        setupUI()
+        bindings()
     }
     
     private func setupUI() {
         title = "Weather Detail"
-        
         descLbl.numberOfLines = 0
         errorLbl.numberOfLines = 0
     }
     
     private func bindings() {
-        if let viewModel = viewModel as? WeatherDetailViewModel {
-            showLoading()
-            viewModel.getWeather(successBlock: { [weak self] weatherData in
-                if let self = self {
-                    self.updateView(weatherData: weatherData, errorMessage: nil)
-                }
-            }, failBlock: { [weak self] errorMessage in
-                if let self = self {
-                    self.updateView(weatherData: nil, errorMessage: errorMessage)
-                }
-            })
-        }
+        guard let viewModel = viewModel else { return }
+        showLoading()
+        viewModel.getWeather(successBlock: { [weak self] weatherData in
+            if let self = self {
+                self.updateView(weatherData: weatherData, errorMessage: nil)
+            }
+        }, failBlock: { [weak self] errorMessage in
+            if let self = self {
+                self.updateView(weatherData: nil, errorMessage: errorMessage)
+            }
+        })
     }
     
     private func showLoading() {

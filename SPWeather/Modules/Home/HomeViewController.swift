@@ -8,25 +8,35 @@
 import UIKit
 
 class HomeViewController: ViewController {
-
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var emptyView: UIView!
+
+    var viewModel: HomeViewModelInterface?
+
+    init(viewModel: HomeViewModelInterface,
+         navigator: Navigator) {
+        self.viewModel = viewModel
+        super.init(nibName: Self.reuseID, bundle: nil)
+        self.navigator = navigator
+    }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     private var debouncer: Debouncer!
-    var viewModelItems: [HomeViewModelItem]?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.setupUI()
-        self.bindings()
+        setupUI()
+        bindings()
     }
     
     private func setupUI() {
         title = "Home"
-        self.debouncer = Debouncer(delay: 0.5)
-        tableView.register(UINib(nibName: HomeTableViewCell.reuseID, bundle: nil), forCellReuseIdentifier: HomeTableViewCell.reuseID)
+        debouncer = Debouncer(delay: 0.5)
+        HomeTableViewCell.registerNib(in: tableView)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 100
         tableView.delegate = self
@@ -35,98 +45,77 @@ class HomeViewController: ViewController {
     }
     
     private func bindings() {
-        if let viewModel = viewModel as? HomeViewModel {
-            viewModel.didChangeData = {[weak self] items in
-                if let self = self {
-                    self.viewModelItems = items
-                    self.updateView()
-                }
+        viewModel?.didChangeData = { [weak self] in
+            DispatchQueue.main.async { [weak self] in
+                self?.updateView()
             }
-            viewModel.initalViewState()
         }
+        viewModel?.initalViewState()
     }
     
     private func updateView() {
-        DispatchQueue.main.async {[weak self] in
-            guard let self = self,
-                  let viewModel = self.viewModel as? HomeViewModel else { return }
-            switch viewModel.viewState {
-            case .empty:
-                self.view.bringSubviewToFront(self.emptyView)
-            case .seaching, .history:
-                self.view.bringSubviewToFront(self.tableView)
-            default: break
-            }
-            self.tableView.reloadData()
+        guard let viewModel = self.viewModel else { return }
+        switch viewModel.viewState {
+        case .empty:
+            view.bringSubviewToFront(emptyView)
+        case .seaching, .history:
+            view.bringSubviewToFront(tableView)
+        default: break
         }
+        tableView.reloadData()
     }
     
     private func pushWeatherDetail(with city: String) {
-        if let viewModel = viewModel as? HomeViewModel {
-            self.navigator.show(segue: .weatherDetail(viewModel.createWeatherDetailViewModel(city: city)), sender: self, transition: .push)
-        }
+        guard let viewModel = viewModel else { return }
+        navigator.show(segue: .weatherDetail(viewModel.createWeatherDetailViewModel(city: city)),
+                       sender: self,
+                       transition: .push)
     }
 }
 
 extension HomeViewController: UISearchBarDelegate {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        self.debouncer.call(action: { [weak self] in
-            if let self = self, let viewModel = self.viewModel as? HomeViewModel {
-                self.searchBar.showsCancelButton = true
-                viewModel.search(query: searchText)
-            }
+    func searchBar(_ searchBar: UISearchBar,
+                   textDidChange searchText: String) {
+        debouncer.call(action: { [weak self] in
+            self?.searchBar.showsCancelButton = true
+            self?.viewModel?.search(query: searchText)
         })
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        if let viewModel = viewModel as? HomeViewModel {
-            self.searchBar.text = ""
-            self.searchBar.showsCancelButton = false
-            self.searchBar.resignFirstResponder()
-            viewModel.resetViewState()
-        }
+        self.searchBar.text = ""
+        self.searchBar.showsCancelButton = false
+        self.searchBar.resignFirstResponder()
+        viewModel?.resetViewState()
     }
 }
 
-extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let items = self.viewModelItems {
-            return items.count
-        }
-        return 0
+extension HomeViewController: UITableViewDelegate,
+                              UITableViewDataSource {
+    func tableView(_ tableView: UITableView,
+                   numberOfRowsInSection section: Int) -> Int {
+        return viewModel?.numberOfRowsInSection() ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let cell = tableView.dequeueCell(HomeTableViewCell.self, forIndexPath: indexPath),
-           let viewModelItems = self.viewModelItems,
-           viewModelItems.count > indexPath.row {
-            cell.bind(viewModelItem: viewModelItems[indexPath.row])
-            return cell
+        let cell = HomeTableViewCell.dequeueReusableCell(in: tableView, for: indexPath)
+        if let viewModelItem = viewModel?.dataForCell(at: indexPath) {
+            cell.bind(viewModelItem: viewModelItem)
         }
-        return .init()
+        return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if let viewModelItems = self.viewModelItems,
-           viewModelItems.count > indexPath.row {
-            let item = viewModelItems[indexPath.row]
-            switch item {
-            case .searching(let result):
-                if result.areaName.isEmpty == false {
-                    self.pushWeatherDetail(with: result.areaName[0].value)
-                }
-            case .searchHistory(let city):
-                if let name = city.name {
-                    self.pushWeatherDetail(with: name)
-                }
-            default:
-                break
-            }
+        guard let viewModelItem = viewModel?.dataForCell(at: indexPath) else { return }
+        switch viewModelItem {
+        case .searching(let result):
+            guard !result.areaName.isEmpty else { return }
+            pushWeatherDetail(with: result.areaName[0].value)
+        case .searchHistory(let city):
+            guard let name = city.name else { return }
+            pushWeatherDetail(with: name)
+        default: break
         }
     }
 }

@@ -28,14 +28,14 @@ class WeatherDetailViewControllerTests: XCTestCase {
     
     func testviewControllerWithCorrectCityName() {
         let viewModel = WeatherDetailViewModel.init(interactor, city: "paris")
-        viewController = WeatherDetailViewController.fromNib(ofType: WeatherDetailViewController.self, viewModel: viewModel, navigator: Navigator.init()) as? WeatherDetailViewController
+        viewController = WeatherDetailViewController(viewModel: viewModel, navigator: Navigator())
         viewController.loadViewIfNeeded()
         XCTAssertEqual(viewController.title, "Weather Detail")
     }
     
     func testHomeViewWithInCorrectCityName() {
         let viewModel = WeatherDetailViewModel.init(interactor, city: "qwe")
-        viewController = WeatherDetailViewController.fromNib(ofType: WeatherDetailViewController.self, viewModel: viewModel, navigator: Navigator.init()) as? WeatherDetailViewController
+        viewController = WeatherDetailViewController(viewModel: viewModel, navigator: Navigator())
         viewController.loadViewIfNeeded()
         XCTAssertEqual(viewController.title, "Weather Detail")
     }

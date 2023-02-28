@@ -9,7 +9,6 @@ import XCTest
 @testable import SPWeather
 
 class HomeViewControllerTests: XCTestCase {
-
     var mockCoreData: MockCoreData!
     var viewController: HomeViewController!
     var coredataManager: CoreDataManager!
@@ -21,7 +20,7 @@ class HomeViewControllerTests: XCTestCase {
         let interactor = HomeInteractor.init(service: WeatherAPIService.init(),
                                              coredataManager: coredataManager)
         let viewModel = HomeViewModel.init(interactor: interactor)
-        viewController = HomeViewController.fromNib(ofType: HomeViewController.self, viewModel: viewModel, navigator: Navigator()) as? HomeViewController
+        viewController = HomeViewController(viewModel: viewModel, navigator: Navigator())
         viewController?.loadViewIfNeeded()
         let _ = viewController?.view
     }
@@ -68,7 +67,6 @@ class HomeViewControllerTests: XCTestCase {
     
     func testTableViewConformsToTableViewDataSourceProtocol() {
         XCTAssertTrue(viewController.conforms(to: UITableViewDataSource.self))
-        XCTAssertTrue(viewController.responds(to: #selector(viewController.numberOfSections(in:))))
         XCTAssertTrue(viewController.responds(to: #selector(viewController.tableView(_:numberOfRowsInSection:))))
         XCTAssertTrue(viewController.responds(to: #selector(viewController.tableView(_:cellForRowAt:))))
     }

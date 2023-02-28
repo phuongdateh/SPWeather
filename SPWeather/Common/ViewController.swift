@@ -10,7 +10,7 @@ import UIKit
 protocol ViewModel {}
 
 class ViewController: UIViewController {
-    var viewModel: ViewModel?
+//    var viewModel: ViewModel?
     var navigator: Navigator!
 
     override func viewDidLoad() {

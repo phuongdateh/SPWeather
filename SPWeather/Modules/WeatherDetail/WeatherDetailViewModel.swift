@@ -7,7 +7,12 @@
 
 import Foundation
 
-class WeatherDetailViewModel: ViewModel {
+protocol WeatherDetailViewModelInterface {
+    func getWeather(successBlock: ((WeatherData) -> ())?, failBlock: ((String) -> ())?)
+    func getWeatherIcon(url: String, completion: ((Data?) ->())?)
+}
+
+class WeatherDetailViewModel: WeatherDetailViewModelInterface {
     private let interactor: WeatherDetailInteractorProtocol
     var city: String
     var weatherData: WeatherData?

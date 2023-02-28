@@ -7,18 +7,33 @@
 
 import Foundation
 
+typealias VoidAction = () -> Void
+
 enum HomeViewState {
     case seaching
     case empty
     case history
 }
 
-class HomeViewModel: ViewModel {
+protocol HomeViewModelInterface {
+    var didChangeData: VoidAction? { get set }
+    var viewState: HomeViewState! { get set }
+
+    func initalViewState()
+    func resetViewState()
+    func createWeatherDetailViewModel(city: String) -> WeatherDetailViewModel
+    func search(query: String)
+
+    func numberOfRowsInSection() -> Int
+    func dataForCell(at indexPath: IndexPath) -> HomeViewModelItem?
+}
+
+class HomeViewModel: HomeViewModelInterface {
     private var interactor: HomeInteractorProtocol
     private var cityInfoList: [CityInfo]?
     
     var viewState: HomeViewState!
-    var didChangeData: (([HomeViewModelItem]) -> ())?
+    var didChangeData: VoidAction?
     var currentCityList: [CityInfo]?
     
     init(interactor: HomeInteractorProtocol) {
@@ -35,43 +50,64 @@ class HomeViewModel: ViewModel {
     }
     
     func resetViewState() {
-        var viewModelItems = [HomeViewModelItem]()
-        if self.interactor.getCitysLocal().isEmpty == false {
-            viewModelItems = self.prepareSearchHistoryViewModelItems(self.interactor.getCitysLocal())
-            self.viewState = .history
-        } else {
-            self.viewState = .empty
+//        var viewModelItems = [HomeViewModelItem]()
+        guard !interactor.getCitysLocal().isEmpty else {
+            viewState = .empty
+            didChangeData?()
+            return
         }
-        self.didChangeData?(viewModelItems)
+        prepareSearchHistoryViewModelItems(interactor.getCitysLocal())
+        viewState = .history
+        didChangeData?()
+//        if interactor.getCitysLocal().isEmpty == false {
+////            viewModelItems = prepareSearchHistoryViewModelItems(self.interactor.getCitysLocal())
+//            prepareSearchHistoryViewModelItems(interactor.getCitysLocal())
+//        viewState = .history
+//        } else {
+//            viewState = .empty
+//        }
     }
-    
+
     func search(query: String) {
-        if query.isEmpty == false {
-            self.viewState = .seaching
-            self.interactor.search(cityName: query, successBlock: { [weak self] results in
-                if let self = self {
-                    self.didChangeData?(self.prepareSearchingViewModelItems(results))
-                }
-            }, failBlock: { [weak self] errorMessage in
-                if let self = self {
-                    self.didChangeData?(self.prepareSearchFailViewModelItems(errorMessage))
-                }
-            })
+        guard !query.isEmpty else { return }
+        viewState = .seaching
+        interactor.search(cityName: query, successBlock: { [weak self] results in
+            self?.prepareSearchingViewModelItems(results)
+//            self.didChangeData?(self.prepareSearchingViewModelItems(results))
+            self?.didChangeData?()
+        }, failBlock: { [weak self] errorMessage in
+//            guard let self = self else { return }
+//            self.didChangeData?(self.prepareSearchFailViewModelItems(errorMessage))
+            self?.prepareSearchFailViewModelItems(errorMessage)
+            self?.didChangeData?()
+        })
+    }
+
+    lazy var viewModelItems = [HomeViewModelItem]()
+
+    func numberOfRowsInSection() -> Int {
+        return viewModelItems.count
+    }
+
+    func dataForCell(at indexPath: IndexPath) -> HomeViewModelItem? {
+        guard viewModelItems.count > indexPath.row else {
+            return nil
         }
+        return viewModelItems[indexPath.row]
+    }
+
+    func prepareSearchFailViewModelItems(_ message: String) {
+        viewModelItems = [HomeViewModelItem.searchFail(message)]
     }
     
-    func prepareSearchFailViewModelItems(_ message: String) -> [HomeViewModelItem] {
-        return [HomeViewModelItem.searchFail(message)]
-    }
-    
-    func prepareSearchingViewModelItems(_ results: [SearchResult]) -> [HomeViewModelItem] {
-        return results.map({ result -> HomeViewModelItem in
+    func prepareSearchingViewModelItems(_ results: [SearchResult]) {
+        viewModelItems = results.map({ result -> HomeViewModelItem in
             return .searching(result)
         })
     }
-    
-    func prepareSearchHistoryViewModelItems(_ cityList: [CityInfo]) -> [HomeViewModelItem] {
-        return cityList.map({ city -> HomeViewModelItem in
+
+    func prepareSearchHistoryViewModelItems(_ cityList: [CityInfo]) {
+        viewModelItems = cityList.map({ city -> HomeViewModelItem in
             return .searchHistory(city)
         })
     }
@@ -80,16 +116,21 @@ class HomeViewModel: ViewModel {
         if let cityList = self.currentCityList,
            cityList.isEmpty == false {
             self.viewState = .history
-            self.didChangeData?(self.prepareSearchHistoryViewModelItems(cityList))
+//            self.didChangeData?(self.prepareSearchHistoryViewModelItems(cityList))
+            prepareSearchHistoryViewModelItems(cityList)
+            didChangeData?()
         } else {
-            self.viewState = .empty
+            viewState = .empty
         }
     }
     
     @objc func updateCityList() {
         self.currentCityList = self.interactor.getCitysLocal()
-        if let cityList = self.currentCityList, cityList.isEmpty == false {
-            self.didChangeData?(self.prepareSearchHistoryViewModelItems(cityList))
+        if let cityList = self.currentCityList,
+           cityList.isEmpty == false {
+//            self.didChangeData?(self.prepareSearchHistoryViewModelItems(cityList))
+            prepareSearchHistoryViewModelItems(cityList)
+            didChangeData?()
         }
     }
 }
