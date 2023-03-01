@@ -8,15 +8,9 @@
 import UIKit
 
 class WeatherDetailViewController: ViewController {
-    @IBOutlet weak var contentView: UIView!
-    @IBOutlet weak var weatherIconImageView: UIImageView!
-    @IBOutlet weak var humidityLbl: UILabel!
-    @IBOutlet weak var tempLbl: UILabel!
-    @IBOutlet weak var descLbl: UILabel!
-    
-    @IBOutlet weak var errorView: UIView!
-    @IBOutlet weak var errorLbl: UILabel!
-    
+    @IBOutlet weak var contentView: UIStackView!
+    @IBOutlet weak var iconImageView: UIImageView!
+    @IBOutlet weak var contentLbl: UILabel!
     @IBOutlet weak var loadingView: UIView!
 
     var viewModel: WeatherDetailViewModelInterface?
@@ -40,60 +34,43 @@ class WeatherDetailViewController: ViewController {
     
     private func setupUI() {
         title = "Weather Detail"
-        descLbl.numberOfLines = 0
-        errorLbl.numberOfLines = 0
+        contentLbl.numberOfLines = 0
+
+        contentView.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        contentView.isLayoutMarginsRelativeArrangement = true
     }
     
     private func bindings() {
-        guard let viewModel = viewModel else { return }
-        showLoading()
-        viewModel.getWeather(successBlock: { [weak self] weatherData in
-            if let self = self {
-                self.updateView(weatherData: weatherData, errorMessage: nil)
+        viewModel?.didUpdateViewState = { [weak self] viewState in
+            DispatchQueue.main.async { [weak self] in
+                self?.updateView(viewState)
             }
-        }, failBlock: { [weak self] errorMessage in
-            if let self = self {
-                self.updateView(weatherData: nil, errorMessage: errorMessage)
-            }
-        })
+        }
+        viewModel?.fetchWeather()
     }
-    
+
+    private func updateView(_ state: WeatherDetailViewModel.ViewState) {
+        contentView.isHidden = state == .loading
+        switch state {
+        case .loading:
+            showLoading()
+        case .loaded:
+            hideLoading()
+            contentLbl.attributedText = viewModel?.contentAttributedText()
+            viewModel?.downloadIcon(completion: { [weak self] data in
+                DispatchQueue.main.async { [weak self] in
+                    guard let data = data else { return }
+                    self?.iconImageView.image = UIImage(data: data)
+                }
+            })
+        }
+    }
+
     private func showLoading() {
-        self.view.bringSubviewToFront(loadingView)
-        self.loadingView.alpha = 1
+        loadingView.isHidden = false
     }
     
     private func hideLoading() {
-        self.loadingView.alpha = 0
-    }
-    
-    private func updateView(weatherData: WeatherData?, errorMessage: String?) {
-        DispatchQueue.main.async {[weak self] in
-            guard let self = self else { return }
-            self.hideLoading()
-            if let model = weatherData {
-                if model.currentCondition.isEmpty == false {
-                    let condition = model.currentCondition[0]
-                    self.humidityLbl.text = "Humidity: " + condition.humidity + "%"
-                    if condition.weatherDesc.isEmpty == false {
-                        self.descLbl.text = "Description: " + condition.weatherDesc[0].value
-                    }
-                    self.tempLbl.text = "Temp °C: " + condition.tempC
-                    self.view.bringSubviewToFront(self.contentView)
-                    
-                    let viewModel = self.viewModel as! WeatherDetailViewModel
-                    viewModel.getWeatherIcon(url: condition.weatherIconUrl[0].value, completion: { [weak self] data in
-                        DispatchQueue.main.async {[weak self] in
-                            if let data = data {
-                                self?.weatherIconImageView.image = UIImage(data: data)
-                            }
-                        }
-                    })
-                }
-            } else {
-                self.errorLbl.text = errorMessage!
-                self.view.bringSubviewToFront(self.errorView)
-            }
-        }
+        loadingView.isHidden = true
     }
 }
