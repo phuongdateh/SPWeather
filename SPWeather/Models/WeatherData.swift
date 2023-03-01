@@ -10,6 +10,12 @@ import Foundation
 struct WeatherData: Decodable {
     let cities: [City]
     let currentCondition: [CurrentCondition]
+
+    init(cities: [City],
+         currentCondition: [CurrentCondition]) {
+        self.cities = cities
+        self.currentCondition = currentCondition
+    }
 }
 
 extension WeatherData {

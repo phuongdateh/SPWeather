@@ -23,7 +23,7 @@ class WeatherDetailViewModel: WeatherDetailViewModelInterface {
     private let interactor: WeatherDetailInteractorProtocol
     var didUpdateViewState: WeatherDetailViewStateAction?
 
-    private var viewState: ViewState = .loading {
+    var viewState: ViewState = .loading {
         didSet {
             didUpdateViewState?(self.viewState)
         }
@@ -41,17 +41,22 @@ class WeatherDetailViewModel: WeatherDetailViewModelInterface {
 
     func fetchWeather() {
         viewState = .loading
-        interactor.getWeather(cityName: self.city, successBlock: { [weak self] response in
-            self?.weatherData = response
-            self?.viewState = .loaded
-        }, failBlock: { [weak self] errorMessage in
+        interactor.getWeather(
+            cityName: city,
+            success: { [weak self] response in
+                self?.weatherData = response
+                self?.viewState = .loaded
+        }, failure: { [weak self] errorMessage in
             self?.errorMessage = errorMessage
             self?.viewState = .loaded
         })
     }
 
     func downloadIcon(completion: @escaping DataAction) {
-        guard let url = weatherData?.currentCondition.first?.weatherIconUrl.first?.value else { return }
+        guard let url = weatherData?.currentCondition.first?.weatherIconUrl.first?.value else {
+            completion(nil)
+            return
+        }
         interactor.getWeatherIcon(url: url) { data in
             completion(data)
         }
@@ -64,10 +69,12 @@ class WeatherDetailViewModel: WeatherDetailViewModelInterface {
         return NSAttributedString(string: errorMessage)
     }
 
-    private var detailWeatherAttributedText: NSAttributedString? {
+    var detailWeatherAttributedText: NSAttributedString? {
         guard let weatherData = weatherData,
               !weatherData.currentCondition.isEmpty,
-              let condition = weatherData.currentCondition.first else { return nil }
+              let condition = weatherData.currentCondition.first else {
+            return nil
+        }
         let results = NSMutableAttributedString()
         results.append(NSAttributedString(string: "Humidity: " + condition.humidity + "%" + "\n"))
         results.append(NSAttributedString(string: "Description: \(condition.weatherDesc.first?.value ?? "")" + "\n"))

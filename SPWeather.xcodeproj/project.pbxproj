@@ -64,6 +64,7 @@
 		1ACD638929ADB1D60021AFCF /* CoreDataServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD637729ADB1D60021AFCF /* CoreDataServiceTests.swift */; };
 		1ACD638A29ADB1D60021AFCF /* MockCoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD637929ADB1D60021AFCF /* MockCoreData.swift */; };
 		1ACD638D29ADB5140021AFCF /* SPWeather.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD62FD29ADA4CF0021AFCF /* SPWeather.xcdatamodeld */; };
+		1ACD638F29AF223A0021AFCF /* WeatherApiServiceMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD638E29AF223A0021AFCF /* WeatherApiServiceMock.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -136,6 +137,7 @@
 		1ACD637529ADB1D60021AFCF /* WeatherAPIServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherAPIServiceTests.swift; sourceTree = "<group>"; };
 		1ACD637729ADB1D60021AFCF /* CoreDataServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataServiceTests.swift; sourceTree = "<group>"; };
 		1ACD637929ADB1D60021AFCF /* MockCoreData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockCoreData.swift; sourceTree = "<group>"; };
+		1ACD638E29AF223A0021AFCF /* WeatherApiServiceMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherApiServiceMock.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -457,6 +459,7 @@
 			isa = PBXGroup;
 			children = (
 				1ACD637929ADB1D60021AFCF /* MockCoreData.swift */,
+				1ACD638E29AF223A0021AFCF /* WeatherApiServiceMock.swift */,
 			);
 			path = Mock;
 			sourceTree = "<group>";
@@ -609,6 +612,7 @@
 			files = (
 				1ACD638629ADB1D60021AFCF /* WeatherRequestTests.swift in Sources */,
 				1ACD638D29ADB5140021AFCF /* SPWeather.xcdatamodeld in Sources */,
+				1ACD638F29AF223A0021AFCF /* WeatherApiServiceMock.swift in Sources */,
 				1ACD637D29ADB1D60021AFCF /* WeatherDetailViewModelTests.swift in Sources */,
 				1ACD637B29ADB1D60021AFCF /* HomeViewControllerTests.swift in Sources */,
 				1ACD638929ADB1D60021AFCF /* CoreDataServiceTests.swift in Sources */,

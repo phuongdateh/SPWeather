@@ -7,30 +7,69 @@
 
 import XCTest
 @testable import SPWeather
+
 class WeatherDetailInteractorTests: XCTestCase {
     
-    var interactor: WeatherDetailInteractor!
+    lazy var apiServiceMock = WeatherApiServiceMock()
+    var sut: WeatherDetailInteractor!
     
     override func setUp() {
-        let apiService = WeatherAPIService.init()
-        interactor = WeatherDetailInteractor.init(apiService: apiService)
+        sut = WeatherDetailInteractor.init(apiService: apiServiceMock)
+    }
+
+    override func tearDown() {
+        sut = nil
+        super.tearDown()
     }
     
-    func testGetWeatherWithCorrectCityName() {
-        let expectation = self.expectation(description: "result should be have city name contain new")
-        interactor.getWeather(cityName: "new", successBlock: { data in
-            XCTAssertEqual(data.cities.first?.query, "new, Lakefront Airport, United States of America")
+    func testGetWeatherWithSuccessResponse() {
+        let expectation = self.expectation(description: "success block should be called")
+        apiServiceMock.weatherData = WeatherData.mock
+
+        sut.getWeather(cityName: "London") { data in
+            XCTAssertTrue(data.cities.isEmpty == false)
+            XCTAssertTrue(data.currentCondition.isEmpty == false)
             expectation.fulfill()
-        }, failBlock: nil)
-        waitForExpectations(timeout: 5)
+        } failure: { error in }
+
+        waitForExpectations(timeout: 2, handler: nil)
     }
-    
-    func testGetWeatherWithInCorrectCityName() {
-        let expectation = self.expectation(description: "fail compltion will be excute and return error message")
-        interactor.getWeather(cityName: "nnnnnnn", successBlock: nil, failBlock: { errorMessage in
-            XCTAssertEqual(errorMessage, "Unable to find any matching weather location to the query submitted!")
+
+    func testGetWeatherWithFailureResponse() {
+        let expectation = self.expectation(description: "failure block should be called")
+        apiServiceMock.weatherData = nil
+
+        sut.getWeather(cityName: "ABC") { data in
+        } failure: { error in
+            XCTAssertNotNil(error)
             expectation.fulfill()
-        })
-        waitForExpectations(timeout: 5)
+        }
+
+        waitForExpectations(timeout: 2, handler: nil)
     }
+
+    func testDownLoadIconImageWithSuccessResponse() {
+        let expectation = self.expectation(description: "Success block should be called")
+        apiServiceMock.imageData = Data(count: 10)
+
+        sut.getWeatherIcon(url: "https://") { data in
+            XCTAssertNotNil(data)
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 2, handler: nil)
+    }
+
+    func testDownLoadIconImageWithFailureResponse() {
+        let expectation = self.expectation(description: "Failure block should be called")
+        apiServiceMock.imageData = nil
+
+        sut.getWeatherIcon(url: "https://") { data in
+            XCTAssertNil(data)
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 2, handler: nil)
+    }
+
 }

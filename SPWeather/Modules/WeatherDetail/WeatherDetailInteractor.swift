@@ -7,9 +7,12 @@
 
 import Foundation
 
+typealias StringAction = (String) -> Void
+typealias WeatherDataAction = (WeatherData) -> Void
+
 protocol WeatherDetailInteractorProtocol {
-    func getWeather(cityName: String, successBlock: ((WeatherData) -> ())?, failBlock: ((String) -> ())?)
-    func getWeatherIcon(url: String, completion: ((Data?) ->())?)
+    func getWeather(cityName: String, success: @escaping WeatherDataAction, failure: @escaping StringAction)
+    func getWeatherIcon(url: String, completion: @escaping DataAction)
 }
 
 class WeatherDetailInteractor: NSObject, WeatherDetailInteractorProtocol {
@@ -21,30 +24,28 @@ class WeatherDetailInteractor: NSObject, WeatherDetailInteractorProtocol {
         self.coreDataManager = coreDataManager
     }
     
-    func getWeather(cityName: String,
-                    successBlock: ((WeatherData) -> ())?,
-                    failBlock: ((String) -> ())?) {
+    func getWeather(cityName: String, success: @escaping WeatherDataAction, failure: @escaping StringAction) {
         apiService.getWeather(of: cityName) { result in
             switch result {
             case .success(let weatherData):
                 if weatherData.cities.isEmpty == false {
                     self.saveCity(with: weatherData.cities[0].query)
                 }
-                successBlock?(weatherData)
+                success(weatherData)
             case .failure(let error):
-                failBlock?(error.customLocalizedDescription)
+                failure(error.customLocalizedDescription)
             }
         }
     }
     
-    func getWeatherIcon(url: String, completion: ((Data?) -> ())?) {
+    func getWeatherIcon(url: String, completion: @escaping DataAction) {
         apiService.downloadImage(url: url) { result in
             switch result {
             case .success(let data):
-                completion?(data)
+                completion(data)
             case .failure(let error):
                 print(error.customLocalizedDescription)
-                completion?(nil)
+                completion(nil)
             }
         }
     }
