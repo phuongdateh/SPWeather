@@ -9,28 +9,31 @@ import Foundation
 import CoreData
 
 protocol HomeInteractorProtocol {
-    func search(cityName: String, successBlock: (([SearchResult]) -> ())?, failBlock: ((String) -> ())?)
+    func search(cityName: String,
+                success: @escaping SearchResultsAction,
+                failure: @escaping StringAction)
     func getCitysLocal() -> [CityInfo]
 }
 
 class HomeInteractor: HomeInteractorProtocol {
-    
     private var apiService: WeatherApiProtocol?
     private let coredataManager: CoreDataManager
-    
+
     init(service: WeatherApiProtocol,
          coredataManager: CoreDataManager = CoreDataManager()) {
         self.apiService = service
         self.coredataManager = coredataManager
     }
-    
-    func search(cityName: String, successBlock: (([SearchResult]) -> ())?, failBlock: ((String) -> ())?) {
-        self.apiService?.search(query: cityName, completion: { result in
+
+    func search(cityName: String,
+                success: @escaping SearchResultsAction,
+                failure: @escaping StringAction) {
+        apiService?.search(query: cityName, completion: { result in
             switch result {
             case .success(let searchData):
-                successBlock?(searchData.results)
+                success(searchData.results)
             case .failure(let error):
-                failBlock?(error.customLocalizedDescription)
+                failure(error.customLocalizedDescription)
             }
         })
     }

@@ -10,6 +10,7 @@ import Foundation
 typealias WeatherDataResult = (Result<WeatherData, ErrorData>) -> ()
 typealias SearchDataResult = (Result<SearchData, ErrorData>) -> ()
 typealias ResultImage = (Result<Data, ErrorData>) -> ()
+typealias SearchResultsAction = ([SearchResult]) -> Void
 
 protocol WeatherApiProtocol {
     func search(query cityName: String, completion: @escaping SearchDataResult)

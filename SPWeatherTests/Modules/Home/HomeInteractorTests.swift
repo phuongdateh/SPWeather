@@ -9,34 +9,48 @@ import XCTest
 @testable import SPWeather
 
 class HomeInteractorTests: XCTestCase {
-    
+    lazy var mockApiService = WeatherApiServiceMock()
     var interactor: HomeInteractor!
 
     override func setUp() {
-        let config = URLSessionConfiguration.default
-        let apiService = WeatherAPIService.init(urlSession: URLSession(configuration: config))
-        self.interactor = HomeInteractor.init(service: apiService)
-    }
-    
-    func testSearchWithCorrectInCityName() {
-        let expectation = self.expectation(description: "should return error message")
-        interactor.search(cityName: "aaaaaaaaaaaa", successBlock: nil, failBlock: { errorMsg in
-            XCTAssertEqual(errorMsg, "Unable to find any matching weather location to the query submitted!")
-            expectation.fulfill()
-        })
-        
-        waitForExpectations(timeout: 5)
+        interactor = HomeInteractor(service: mockApiService)
     }
 
-    func testSearchWithCorrectCityName() {
-        let expectation = self.expectation(description: "should return list result data")
-        interactor.search(cityName: "Paris", successBlock: { results in
-            XCTAssertTrue(results.count > 0)
-            XCTAssertEqual(results.first?.areaName.first?.value, "Paris")
-            XCTAssertEqual(results.first!.country.first!.value, "France")
-            expectation.fulfill()
-        }, failBlock: nil)
-        
-        waitForExpectations(timeout: 5)
+    override func tearDown() {
+        interactor = nil
     }
+
+    func testSearchWithFailureResponse() {
+        let expectation = expectation(description: "should return an error message")
+        mockApiService.searchData = nil
+
+        interactor.search(cityName: "Wrong City name") { _ in
+        } failure: { errorMsg in
+            XCTAssertEqual(errorMsg, "Failure data")
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
+    func testSearchWithSuccessResponse() {
+        let expectation = expectation(description: "should return an results")
+        mockApiService.searchData = mockSearchData
+
+        interactor.search(cityName: "Seabrook") { results in
+            XCTAssertTrue(!results.isEmpty)
+            let actualAreaname = "Seabrook"
+            let expected = results.first?.areaName.first?.value
+            XCTAssertEqual(actualAreaname, expected)
+            expectation.fulfill()
+        } failure: { _ in }
+
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
+    lazy var mockSearchData: SearchData = {
+        let data = loadStub(name: "SearchSuccessJSON", extension: "json")
+        let searchApiResult = try! JSONDecoder().decode(SearchApiResult.self, from: data)
+        return searchApiResult.searchData
+    }()
 }

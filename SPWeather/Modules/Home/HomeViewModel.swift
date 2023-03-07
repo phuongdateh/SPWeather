@@ -66,11 +66,13 @@ class HomeViewModel: HomeViewModelInterface {
     func search(query: String) {
         guard !query.isEmpty else { return }
         debouncer.call(action: { [weak self] in
-            self?.interactor.search(cityName: query, successBlock: { [weak self] results in
-                self?.prepareSearchingViewModelItems(results)
-            }, failBlock: { [weak self] errorMessage in
-                self?.prepareSearchFailViewModelItems(errorMessage)
-            })
+            self?.interactor.search(
+                cityName: query,
+                success: { [weak self] results in
+                    self?.prepareSearchingViewModelItems(results)
+                }, failure: { [weak self] errorMessage in
+                    self?.prepareSearchFailViewModelItems(errorMessage)
+                })
         })
     }
 
