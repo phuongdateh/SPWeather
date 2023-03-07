@@ -10,7 +10,7 @@ import Foundation
 typealias HomeViewStateAction = (HomeViewState) -> Void
 
 enum HomeViewState {
-    case seaching
+    case searching
     case empty
     case history
 }
@@ -91,14 +91,14 @@ class HomeViewModel: HomeViewModelInterface {
 
     func prepareSearchFailViewModelItems(_ message: String) {
         viewModelItems = [HomeViewModelItem.searchFail(message)]
-        viewState = .seaching
+        viewState = .searching
     }
     
     func prepareSearchingViewModelItems(_ results: [SearchResult]) {
         viewModelItems = results.map({ result -> HomeViewModelItem in
             return .searching(result)
         })
-        viewState = .seaching
+        viewState = .searching
     }
 
     func prepareSearchHistoryViewModelItems(_ cityList: [CityInfo]) {
@@ -119,8 +119,5 @@ class HomeViewModel: HomeViewModelInterface {
 
     @objc func updateCityList() {
         currentCityList = interactor.getCitysLocal() // Get new local data after user go to Detail Screen
-        guard !currentCityList.isEmpty else { return }
-        prepareSearchHistoryViewModelItems(currentCityList)
-        viewState = .history
     }
 }
