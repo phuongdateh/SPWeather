@@ -7,11 +7,17 @@
 
 import Foundation
 
+struct SearchApiResult: Decodable {
+    let searchData: SearchData
+    enum CodingKeys: String, CodingKey {
+        case searchData = "search_api"
+    }
+}
+
 struct SearchData: Decodable {
     enum CodingKeys: String, CodingKey {
         case results = "result"
     }
-    
     let results: [SearchResult]
 }
 
