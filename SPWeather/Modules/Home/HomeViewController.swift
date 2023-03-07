@@ -54,7 +54,7 @@ class HomeViewController: ViewController {
         switch viewState {
         case .empty:
             view.bringSubviewToFront(emptyView)
-        case .seaching, .history:
+        case .searching, .history:
             view.bringSubviewToFront(tableView)
             tableView.reloadData()
         }
