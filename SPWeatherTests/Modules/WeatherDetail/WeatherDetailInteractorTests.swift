@@ -6,22 +6,42 @@
 //
 
 import XCTest
+import CoreData
 @testable import SPWeather
 
 class WeatherDetailInteractorTests: XCTestCase {
-    
     lazy var apiServiceMock = WeatherApiServiceMock()
     var sut: WeatherDetailInteractor!
+    var mockCoreDataManager: MockCoreDataManager!
     
     override func setUp() {
-        sut = WeatherDetailInteractor.init(apiService: apiServiceMock)
-    }
-
-    override func tearDown() {
-        sut = nil
-        super.tearDown()
+        super.setUp()
+        mockCoreDataManager = MockCoreDataManager(container: MockCoreData(xctTestCase: self).getMockPersistantContainer())
+        sut = WeatherDetailInteractor(apiService: apiServiceMock, coreDataManager: mockCoreDataManager)
     }
     
+    func testSaveCityWhenCityNameExistsShouldUpdateCity() {
+        let cityName = "London"
+        let mockCityItem = CityInfo(context: mockCoreDataManager.persistentContainer.viewContext)
+        mockCityItem.name = cityName
+        mockCoreDataManager.mockCity = mockCityItem
+
+        sut.saveCity(with: cityName)
+
+        XCTAssertTrue(mockCoreDataManager.updateCityCalled)
+        XCTAssertEqual(mockCoreDataManager.updatedCityName, cityName)
+    }
+    
+    func testSaveCityWhenCityNameDoesNotExistShouldInsertCity() {
+        let cityName = "New York"
+        mockCoreDataManager.mockCityList = []
+
+        sut.saveCity(with: cityName)
+
+        XCTAssertTrue(mockCoreDataManager.insertCityItemCalled)
+        XCTAssertEqual(mockCoreDataManager.insertedCityName, cityName)
+    }
+
     func testGetWeatherWithSuccessResponse() {
         let expectation = self.expectation(description: "success block should be called")
         apiServiceMock.weatherData = WeatherData.mock
@@ -71,5 +91,4 @@ class WeatherDetailInteractorTests: XCTestCase {
 
         waitForExpectations(timeout: 2, handler: nil)
     }
-
 }

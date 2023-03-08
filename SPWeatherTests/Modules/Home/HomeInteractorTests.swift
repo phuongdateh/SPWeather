@@ -49,8 +49,6 @@ class HomeInteractorTests: XCTestCase {
     }
 
     lazy var mockSearchData: SearchData = {
-        let data = loadStub(name: "SearchSuccessJSON", extension: "json")
-        let searchApiResult = try! JSONDecoder().decode(SearchApiResult.self, from: data)
-        return searchApiResult.searchData
+        return SearchApiResult.mock().searchData
     }()
 }

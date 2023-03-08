@@ -9,7 +9,7 @@ import XCTest
 import CoreData
 @testable import SPWeather
 
-extension XCTestCase {
+class Utils {
     func loadStub(name: String, extension: String) -> Data {
         let bundle = Bundle(for: type(of: self))
         let url = bundle.url(forResource: name, withExtension: `extension`)

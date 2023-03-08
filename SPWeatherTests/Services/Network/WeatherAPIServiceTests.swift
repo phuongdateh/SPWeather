@@ -9,104 +9,207 @@ import XCTest
 @testable import SPWeather
 
 class WeatherAPIServiceTests: XCTestCase {
-    
-    private var weatherAPI: WeatherAPIService!
-    
+    private lazy var mockUrlSession = MockURLSession()
+    private var sut: WeatherAPIService!
+
     override func setUp() {
         super.setUp()
-        weatherAPI = WeatherAPIService(urlSession: URLSession(configuration: URLSessionConfiguration.default))
+        sut = WeatherAPIService(urlSession: mockUrlSession.getSession())
     }
-    
-    func testParseJSONSearchDataSuccessful() throws {
-        let data = loadStub(name: "SearchSuccessJSON", extension: "json")
-        let json = try JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
-        let dataJson = json["search_api"] as! [String: Any]
-        let searchData = weatherAPI.parseSearchData(dataJson)
-        XCTAssertNotNil(searchData)
-        XCTAssertTrue(searchData?.results.isEmpty == false)
-        XCTAssertEqual(searchData?.results.first?.areaName.first!.value, "Seabrook")
+
+    override func tearDown() {
+        sut = nil
+        super.tearDown()
     }
-    
-    func testParseWeatherDataSuccessful() throws {
-        let data = loadStub(name: "WeatherSuccessJSON", extension: "json")
-        let json = try JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
-        let dataJson = json["data"] as! [String: Any]
-        let weatherData = weatherAPI.parseWeatherData(dataJson)
-        XCTAssertNotNil(weatherData)
-        XCTAssertTrue(weatherData?.cities.isEmpty == false)
-        XCTAssertTrue(weatherData?.currentCondition.isEmpty == false)
-    }
-    
-    func testParseSearchDataErrorRessponseSuccessful() throws {
-        let data = loadStub(name: "SearchErrorJSON", extension: "json")
-        let json = try JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
-        let dataJson = json["data"] as! [String: Any]
-        let errorData = weatherAPI.parseErrorData(dataJson)
-        XCTAssertNotNil(errorData)
-        XCTAssertTrue(errorData?.errors.isEmpty == false)
-    }
-    
-    func testGetWeatherSuccessful() {
-        let dataExpectation = self.expectation(description: "test get weather with correct city name")
-        
-        weatherAPI.getWeather(of: "Paris") { results in
-            switch results {
-            case .success(let data):
-                XCTAssertTrue(data.cities.isEmpty == false)
-                XCTAssertEqual(data.cities.first!.query, "Paris, France")
-                dataExpectation.fulfill()
-            default:
-                break
-            }
-        }
-        waitForExpectations(timeout: 5)
-    }
-    
-    func testGetWeatherInCorrectCityName() {
-        let dataExpectation = self.expectation(description: "should be return error message")
-        weatherAPI.getWeather(of: "qwe") { results in
-            switch results {
-            case .failure(let error):
-                XCTAssertEqual(error.customLocalizedDescription, "Unable to find any matching weather location to the query submitted!")
-                dataExpectation.fulfill()
-            default:
-                break
-            }
-        }
-        
-        waitForExpectations(timeout: 5)
-    }
-    
-    func testSearchCityFailWithInCorrectCityName() {
-        let dataExpectation = self.expectation(description: "should be is fail complition and return error message unable to find this city name")
-        weatherAPI.search(query: "cityNameCorrect") { results in
-            switch results {
-            case .failure(let error):
-                XCTAssertEqual(error.customLocalizedDescription, "Unable to find any matching weather location to the query submitted!")
-                dataExpectation.fulfill()
-            default:
-                break
-            }
-        }
-        
-        waitForExpectations(timeout: 5)
-    }
-    
-    func testSearchCitySuccessfulWithCorrectCityName() {
-        let dataExpectation = self.expectation(description: "should be return list result city")
-        weatherAPI.search(query: "Paris") { result in
+
+    func testDownloadImageWithSuccessResponse() {
+        let expectation = expectation(description: "data image should be not nil")
+        let mockImageData = Data(count: 12)
+        mockUrlSession.setupResponseData(mockImageData)
+
+        sut.downloadImage(url: "http://cdn.worldweatheronline.com/images/wsymbols01_png_64/wsymbol_0004_black_low_cloud.png",
+                          completion: { result in
             switch result {
             case .success(let data):
-                XCTAssertTrue(data.results.isEmpty == false)
-                XCTAssertEqual(data.results.first!.areaName.first!.value, "Paris")
-                XCTAssertEqual(data.results.first!.country.first!.value, "France")
-                XCTAssertEqual(data.results.first!.region.first!.value, "Ile-de-France")
-                dataExpectation.fulfill()
-            default:
-                break
+                XCTAssertNotNil(data)
+                expectation.fulfill()
+            default: break
+            }
+        })
+
+        waitForExpectations(timeout: 2, handler: nil)
+    }
+
+    func testDownloadImageWithFailureResponse() {
+        let expectation = expectation(description: "should be have an error message there")
+        mockUrlSession.setupErrorResponse()
+
+        sut.downloadImage(url: "http://cdn.worldweatheronline.com/images/wsymbols01_png_64/wsymbol_0004_black_low_cloud.png",
+                          completion: { result in
+            switch result {
+            case .failure(let errorData):
+                let actual = errorData.customLocalizedDescription
+                let expected = "Getting data image fail"
+                XCTAssertEqual(actual,expected)
+                expectation.fulfill()
+            default: break
+            }
+        })
+
+        waitForExpectations(timeout: 2, handler: nil)
+    }
+
+    func testSearchCityWithInvalidRequest() {
+        let expectation = expectation(description: "should be return an invalid request error")
+        mockUrlSession.setupErrorResponse()
+
+        sut.search(query: "") { result in
+            switch result {
+            case .failure(let error):
+                let actual = error
+                let expected = ErrorData.failedRequest
+                XCTAssertEqual(actual, expected)
+                expectation.fulfill()
+            default: break
             }
         }
-        
-        waitForExpectations(timeout: 5)
+
+        waitForExpectations(timeout: 2, handler: nil)
+    }
+
+    func testSearchCityWithSuccessResponse() {
+        let expectation = expectation(description: "should be return an list results cities")
+        mockUrlSession.setupResponseData(SearchApiResult.data())
+
+        sut.search(query: "Test city") { result in
+            switch result {
+            case .success(let searchData):
+                let result = searchData.results.first!
+                XCTAssertTrue(!searchData.results.isEmpty)
+                XCTAssertEqual(result.areaName.first!.value, "Seabrook")
+                XCTAssertEqual(result.country.first!.value, "United States of America")
+                XCTAssertEqual(result.region.first!.value, "Louisiana")
+                expectation.fulfill()
+            default: break
+            }
+        }
+
+        waitForExpectations(timeout: 2, handler: nil)
+    }
+
+    func testSearchCityWithInvalidResponseStatusCodeGreater200() {
+        let expectation = expectation(description: "should be return invalid response")
+        mockUrlSession.setupErrorResponse()
+
+        sut.search(query: "Test city") { result in
+            switch result {
+            case .failure(.invalidResponse):
+                expectation.fulfill()
+            default: break
+            }
+        }
+
+        waitForExpectations(timeout: 2, handler: nil)
+    }
+
+    func testSearchCityInvalidResponseInvalidErrorResponse() {
+        let expectation = expectation(description: "should be return invalid response")
+        mockUrlSession.setupResponseData(Data(count: 10))
+
+        sut.search(query: "Test city") { result in
+            switch result {
+            case .failure(.invalidResponse):
+                expectation.fulfill()
+            default: break
+            }
+        }
+
+        waitForExpectations(timeout: 2, handler: nil)
+    }
+
+    func testGetWeatherWithInvalidRequest() {
+        let expectation = expectation(description: "should be return an invalid request error")
+        mockUrlSession.setupErrorResponse()
+
+        sut.getWeather(of: "") { result in
+            switch result {
+            case .failure(let error):
+                let actual = error
+                let expected = ErrorData.failedRequest
+                XCTAssertEqual(actual, expected)
+                expectation.fulfill()
+            default: break
+            }
+        }
+
+        waitForExpectations(timeout: 2, handler: nil)
+    }
+
+    func testGetWeatherWithSuccessResponse() {
+        let expectation = expectation(description: "should be return an list results cities")
+        mockUrlSession.setupResponseData(WeatherDetailData.data())
+
+        sut.getWeather(of: "new") { result in
+            switch result {
+            case .success(let weatherData):
+                XCTAssertNotNil(weatherData)
+                XCTAssertEqual(weatherData.cities.first!.type, "IATA")
+                XCTAssertEqual(weatherData.cities.first!.query, "new, Lakefront Airport, United States of America")
+                expectation.fulfill()
+            default: break
+            }
+        }
+
+        waitForExpectations(timeout: 2, handler: nil)
+    }
+
+    func testGetWeatherWithInvalidResponseStatusCodeGreater200() {
+        let expectation = expectation(description: "should be return invalid response")
+        mockUrlSession.setupErrorResponse()
+
+        sut.getWeather(of: "new") { result in
+            switch result {
+            case .failure(.invalidResponse):
+                expectation.fulfill()
+            default: break
+            }
+        }
+
+        waitForExpectations(timeout: 2, handler: nil)
+    }
+
+    func testGetWeatherInvalidResponseInvalidErrorResponse() {
+        let expectation = expectation(description: "should be return invalid response")
+        mockUrlSession.setupResponseData(Data(count: 10))
+
+        sut.getWeather(of: "new") { result in
+            switch result {
+            case .failure(.invalidResponse):
+                expectation.fulfill()
+            default: break
+            }
+        }
+
+        waitForExpectations(timeout: 2, handler: nil)
+    }
+}
+
+extension SearchApiResult {
+    static func data() -> Data {
+        return Utils().loadStub(name: "SearchSuccessJSON", extension: "json")
+    }
+
+    static func mock() -> SearchApiResult {
+        return try! JSONDecoder().decode(SearchApiResult.self, from: SearchApiResult.data())
+    }
+}
+
+extension WeatherDetailData {
+    static func data() -> Data {
+        return Utils().loadStub(name: "WeatherSuccessJSON", extension: "json")
+    }
+
+    static func mock() -> Self {
+        return try! JSONDecoder().decode(WeatherDetailData.self, from: Self.data())
     }
 }

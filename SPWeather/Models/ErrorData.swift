@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum ErrorData: Error {
+enum ErrorData: Error, Equatable {
     case message(String)
     case failedRequest
     case invalidResponse
@@ -23,17 +23,5 @@ extension ErrorData {
                 return self.localizedDescription
             }
         }
-    }
-}
-
-struct ErrorResponse: Decodable {
-    enum CodingKeys: String, CodingKey {
-        case errors = "error"
-    }
-    
-    let errors: [Message]
-    
-    struct Message: Decodable {
-        let msg: String
     }
 }

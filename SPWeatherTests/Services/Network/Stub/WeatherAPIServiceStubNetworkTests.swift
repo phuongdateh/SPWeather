@@ -23,7 +23,7 @@ class WeatherAPIServiceStubNetworkTests: XCTestCase {
     
     func testSearchSuccessful() {
         let expectation = self.expectation(description: "areaName is Seabrook")
-        stubData = self.loadStub(name: "SearchSuccessJSON", extension: "json")
+        stubData = Utils().loadStub(name: "SearchSuccessJSON", extension: "json")
         
         MockURLProtocol.requestHandler = { request in
             return (HTTPURLResponse(), self.stubData)
@@ -42,7 +42,7 @@ class WeatherAPIServiceStubNetworkTests: XCTestCase {
     
     func testSearchFailResultReturnErrorMessage() {
         let expectation = self.expectation(description: "should be return error message no matching location which query")
-        stubData = self.loadStub(name: "SearchErrorJSON", extension: "json")
+        stubData = Utils().loadStub(name: "SearchErrorJSON", extension: "json")
         
         MockURLProtocol.requestHandler = { request in
             return (HTTPURLResponse(), self.stubData)
@@ -61,7 +61,7 @@ class WeatherAPIServiceStubNetworkTests: XCTestCase {
     
     func testGetWeatherSuccessfulHaveCurrentConditionData() {
         let expectation = self.expectation(description: "current condition should be have tempC, humidity")
-        stubData = self.loadStub(name: "WeatherSuccessJSON", extension: "json")
+        stubData = Utils().loadStub(name: "WeatherSuccessJSON", extension: "json")
         
         MockURLProtocol.requestHandler = { request in
             return (HTTPURLResponse(), self.stubData)
@@ -81,7 +81,7 @@ class WeatherAPIServiceStubNetworkTests: XCTestCase {
     
     func testGetWeatherFailWhichInCorrectCityNameReturnErrorMessage() {
         let expectation = self.expectation(description: "should be return error message no matching location which in correct city name")
-        stubData = self.loadStub(name: "WeatherErrorJSON", extension: "json")
+        stubData = Utils().loadStub(name: "WeatherErrorJSON", extension: "json")
         
         MockURLProtocol.requestHandler = { request in
             return (HTTPURLResponse(), self.stubData)
