@@ -7,6 +7,21 @@
 
 import Foundation
 
+struct ErrorMessage: Decodable {
+    let msg: String
+}
+
+struct ErrorResult: Decodable {
+    let data: ErrorData
+
+    struct ErrorData: Decodable {
+        enum CodingKeys: String, CodingKey {
+            case errors = "error"
+        }
+        let errors: [ErrorMessage]
+    }
+}
+
 struct SearchApiResult: Decodable {
     let searchData: SearchData
     enum CodingKeys: String, CodingKey {

@@ -26,13 +26,9 @@ class HomeViewModelTests: XCTestCase {
         
         let city1 = CityInfo.init()
         cityList.append(city1)
-        
+
         // Search Data Successful
-        let searchDataSuccess = loadStub(name: "SearchSuccessJSON", extension: "json")
-        let searchJsonSuccess = try JSONSerialization.jsonObject(with: searchDataSuccess, options: []) as! [String: Any]
-        let searchDataJson = searchJsonSuccess["search_api"] as! [String: Any]
-        self.searchData = apiService.parseSearchData(searchDataJson)
-        
+        self.searchData = SearchApiResult.mock().searchData
     }
     
     func testSearchWithCorrectCityName() {

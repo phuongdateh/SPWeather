@@ -7,6 +7,7 @@
 
 import Foundation
 
+typealias VoidAction = () -> Void
 typealias StringAction = (String) -> Void
 typealias WeatherDataAction = (WeatherData) -> Void
 
@@ -17,9 +18,10 @@ protocol WeatherDetailInteractorProtocol {
 
 class WeatherDetailInteractor: NSObject, WeatherDetailInteractorProtocol {
     private let apiService: WeatherApiProtocol
-    private let coreDataManager: CoreDataManager
-    
-    init(apiService: WeatherApiProtocol, coreDataManager: CoreDataManager = CoreDataManager.init()) {
+    private let coreDataManager: CoreDataManagerInterface
+
+    init(apiService: WeatherApiProtocol,
+         coreDataManager: CoreDataManagerInterface = CoreDataManager()) {
         self.apiService = apiService
         self.coreDataManager = coreDataManager
     }
@@ -50,14 +52,12 @@ class WeatherDetailInteractor: NSObject, WeatherDetailInteractorProtocol {
         }
     }
     
-    private func saveCity(with cityName: String) {
-        let cityNameList: [String] = self.coreDataManager.fetchCityList().map{( $0.name ?? "")}
-        if cityNameList.contains(cityName) {
+    func saveCity(with cityName: String) {
+        if coreDataManager.fetchCity(with: cityName) != nil {
             coreDataManager.updateCity(with: cityName)
         } else {
-            let _ = self.coreDataManager.insertCityItem(name: cityName)
+            let _ = coreDataManager.insertCityItem(name: cityName)
         }
         coreDataManager.save()
     }
-    
 }

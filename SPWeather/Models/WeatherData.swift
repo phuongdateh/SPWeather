@@ -7,6 +7,10 @@
 
 import Foundation
 
+struct WeatherDetailData: Decodable {
+    let data: WeatherData
+}
+
 struct WeatherData: Decodable {
     let cities: [City]
     let currentCondition: [CurrentCondition]
@@ -16,9 +20,7 @@ struct WeatherData: Decodable {
         self.cities = cities
         self.currentCondition = currentCondition
     }
-}
 
-extension WeatherData {
     enum CodingKeys: String, CodingKey {
         case cities = "request"
         case currentCondition = "current_condition"
