@@ -7,7 +7,7 @@ SPWeather is a weather app for iOS that provides weather information for differe
 - [x] 2. Design app's architecture used MVVM
 - [x] 3. Completed total 5 usecases
 - [x] 4. Write UnitTests 
-- [x] 5. Write UITest
+- [ ] 5. Write UITest
 - [x] 6. Readme file
 
 ### Getting Started
@@ -33,7 +33,7 @@ SPWeather uses MVVM (Model-View-ViewModel) architecture pattern. The project is 
  ### Structure Code 
  - Application: Manage started scene
  - Navigator: to manage navigation to another screen and manage Navigation Controller
- - Common: Include some class using common is `ViewModel`, `ViewController`
+ - Common: Include some class using common `ViewController`
  - Configuration: Include some config for a network is appId for request API, Base URL, API_Key
  - Extension: Using to define some func using many places in a project.
  - Model: Contain some model of a project. For example: `WeatherData`, `SearchData`, .. 
