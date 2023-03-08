@@ -13,11 +13,12 @@ protocol HomeInteractorProtocol {
                 success: @escaping SearchResultsAction,
                 failure: @escaping StringAction)
     func getCitysLocal() -> [CityInfo]
+    func registerObjectContextDidSave(action: @escaping VoidAction)
 }
 
 class HomeInteractor: HomeInteractorProtocol {
     private var apiService: WeatherApiProtocol?
-    private let coredataManager: CoreDataManager
+    private let coredataManager: CoreDataManagerInterface
 
     init(service: WeatherApiProtocol,
          coredataManager: CoreDataManager = CoreDataManager()) {
@@ -40,5 +41,11 @@ class HomeInteractor: HomeInteractorProtocol {
 
     func getCitysLocal() -> [CityInfo] {
         return coredataManager.fetchCityList()
+    }
+
+    func registerObjectContextDidSave(action: @escaping VoidAction) {
+        coredataManager.registerObjectContextDidSave {
+            action()
+        }
     }
 }

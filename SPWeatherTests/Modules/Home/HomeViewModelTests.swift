@@ -6,52 +6,60 @@
 //
 
 import XCTest
-@testable import SPWeather
 import CoreData
+@testable import SPWeather
 
 class HomeViewModelTests: XCTestCase {
-    
+    lazy var mockInteractor = MockHomeInteractor()
     var viewModel: HomeViewModel!
-    
-    var searchData: SearchData!
-    var errorMessage: String!
-    var cityList = [CityInfo]()
-    
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-        let config = URLSessionConfiguration.default
-        let apiService = WeatherAPIService(urlSession: URLSession.init(configuration: config))
-        let interactor = HomeInteractor(service: apiService)
-        viewModel = HomeViewModel.init(interactor: interactor)
-        
-        let city1 = CityInfo.init()
-        cityList.append(city1)
 
-        // Search Data Successful
-        self.searchData = SearchApiResult.mock().searchData
+    override func setUp() {
+        viewModel = HomeViewModel(interactor: mockInteractor)
     }
-    
+
+    override func tearDown() {
+        viewModel = nil
+    }
+
+    func testSearchWithEmptyCitynameExpectedViewStateNil() {
+        mockInteractor.cityList = [CityInfo()]
+        viewModel.search(query: "")
+
+        XCTAssertNil(viewModel.viewState)
+    }
+
     func testSearchWithCorrectCityName() {
         let expectation = self.expectation(description: "shourd return list homeViewModeItem")
+        mockInteractor.searchApiResult = SearchApiResult.mock()
+
         viewModel.search(query: "Paris")
         viewModel.didUpdateViewState = { state in
             let firstItem = self.viewModel.dataForCell(at: IndexPath(row: 0, section: 0))
             switch firstItem {
             case .searching(let result):
-                XCTAssertEqual(result.areaName.first!.value, "Paris")
-                XCTAssertEqual(result.country.first!.value, "France")
-                XCTAssertEqual(result.region.first!.value, "Ile-de-France")
+                XCTAssertEqual(result.areaName.first!.value, "Seabrook")
+                XCTAssertEqual(result.country.first!.value, "United States of America")
+                XCTAssertEqual(result.region.first!.value, "Louisiana")
                 expectation.fulfill()
             default:
                 break
             }
         }
-        waitForExpectations(timeout: 5)
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
+    func testDataForCellExpectedNilResult() {
+        mockInteractor.cityList = []
+
+        let dataForCell = viewModel.dataForCell(at: IndexPath(row: 1, section: 0))
+        XCTAssertNil(dataForCell)
     }
     
     func testSearchWithInCorrectCityName() {
         let expectation = self.expectation(description: "should be return error message")
-        viewModel.search(query: "qwe")
+        mockInteractor.errorMsg = "Unable to find any matching weather location to the query submitted!"
+
+        viewModel.search(query: "Wrong city name")
         viewModel.didUpdateViewState = { state in
             let firstItem = self.viewModel.dataForCell(at: IndexPath(row: 0, section: 0))
             switch firstItem {
@@ -70,7 +78,7 @@ class HomeViewModelTests: XCTestCase {
     }
     
     func testPrepareSearchingViewModelItems() {
-        viewModel.prepareSearchingViewModelItems(self.searchData.results)
+        viewModel.prepareSearchingViewModelItems(SearchApiResult.mock().searchData.results)
         XCTAssertTrue(viewModel.viewModelItems.isEmpty == false)
     }
     
@@ -80,7 +88,9 @@ class HomeViewModelTests: XCTestCase {
     }
     
     func testPrepareSearchHistoryViewModelItemsHaveItems() {
-        viewModel.prepareSearchHistoryViewModelItems(cityList)
+        mockInteractor.cityList = [CityInfo()]
+
+        viewModel.prepareSearchHistoryViewModelItems(mockInteractor.cityList)
         XCTAssertTrue(viewModel.viewModelItems.isEmpty == false)
     }
     
@@ -91,16 +101,43 @@ class HomeViewModelTests: XCTestCase {
     }
     
     func testInitalViewStateExitHistoryCityList() {
-        viewModel.currentCityList = cityList
+        mockInteractor.cityList = [CityInfo()]
+        viewModel.currentCityList = mockInteractor.cityList
+
         viewModel.initalViewState()
         XCTAssertEqual(viewModel.viewState, .history)
     }
 
     func testResetViewStateExpectedHistoryState() {
+        mockInteractor.cityList = [CityInfo()]
         viewModel.viewModelItems = []
+
         viewModel.resetViewState()
+
         let actual = viewModel.viewState!
         let expected = HomeViewState.history
         XCTAssertEqual(actual, expected)
+    }
+
+    func testResetViewStateExpectedEmptyState() {
+        mockInteractor.cityList = [CityInfo]()
+
+        viewModel.resetViewState()
+
+        let actual = viewModel.viewState!
+        let expected = HomeViewState.empty
+        XCTAssertEqual(actual, expected)
+    }
+
+    func testUpdateCityListWhenObjectContextDidSave() {
+        let expectation = expectation(description: "ObjectContextDidSave notification should be posted")
+        mockInteractor.registerObjectContextDidSave {
+            print("sasdasd")
+        }
+        viewModel.registerObjectContextDidSave {
+            expectation.fulfill()
+        }
+        mockInteractor.triggerObjectContextDidSave()
+        waitForExpectations(timeout: 2, handler: nil)
     }
 }

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1A9DF26729B80CAD007BE00D /* MockCoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A9DF26629B80CAD007BE00D /* MockCoreDataManager.swift */; };
 		1A9DF26929B81BD7007BE00D /* MockURLSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A9DF26829B81BD7007BE00D /* MockURLSession.swift */; };
+		1A9DF26B29B852FD007BE00D /* MockHomeInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A9DF26A29B852FD007BE00D /* MockHomeInteractor.swift */; };
 		1ACD62D029AD9E1D0021AFCF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD62CF29AD9E1D0021AFCF /* AppDelegate.swift */; };
 		1ACD62D229AD9E1D0021AFCF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD62D129AD9E1D0021AFCF /* SceneDelegate.swift */; };
 		1ACD62D429AD9E1D0021AFCF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD62D329AD9E1D0021AFCF /* ViewController.swift */; };
@@ -81,6 +82,7 @@
 /* Begin PBXFileReference section */
 		1A9DF26629B80CAD007BE00D /* MockCoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCoreDataManager.swift; sourceTree = "<group>"; };
 		1A9DF26829B81BD7007BE00D /* MockURLSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockURLSession.swift; sourceTree = "<group>"; };
+		1A9DF26A29B852FD007BE00D /* MockHomeInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockHomeInteractor.swift; sourceTree = "<group>"; };
 		1ACD62CC29AD9E1D0021AFCF /* SPWeather.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SPWeather.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1ACD62CF29AD9E1D0021AFCF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1ACD62D129AD9E1D0021AFCF /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -413,6 +415,7 @@
 			isa = PBXGroup;
 			children = (
 				1A9DF26629B80CAD007BE00D /* MockCoreDataManager.swift */,
+				1A9DF26A29B852FD007BE00D /* MockHomeInteractor.swift */,
 				1A9DF26829B81BD7007BE00D /* MockURLSession.swift */,
 				1ACD636A29ADB1D60021AFCF /* MockURLProtocol.swift */,
 				1ACD636B29ADB1D60021AFCF /* JSON */,
@@ -629,6 +632,7 @@
 				1ACD635729ADB1B10021AFCF /* DebouncerTests.swift in Sources */,
 				1ACD638029ADB1D60021AFCF /* MockURLProtocol.swift in Sources */,
 				1A9DF26929B81BD7007BE00D /* MockURLSession.swift in Sources */,
+				1A9DF26B29B852FD007BE00D /* MockHomeInteractor.swift in Sources */,
 				1ACD637E29ADB1D60021AFCF /* WeatherDetailViewControllerTests.swift in Sources */,
 				1ACD637A29ADB1D60021AFCF /* HomeViewModelTests.swift in Sources */,
 			);

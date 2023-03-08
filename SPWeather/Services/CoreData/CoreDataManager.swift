@@ -9,6 +9,7 @@ import Foundation
 import CoreData
 
 protocol CoreDataManagerInterface {
+    func registerObjectContextDidSave(action: @escaping VoidAction)
     func save()
     func updateCity(with name: String)
     func insertCityItem(name: String) -> CityInfo?
@@ -31,9 +32,6 @@ final class CoreDataManager: CoreDataManagerInterface {
             return container
         }()
         self.init(container: container)
-        registerObjectContextDidSave { [weak self] in
-            self?.notifyObjectContextDidSave()
-        }
     }
 
     func registerObjectContextDidSave(action: @escaping VoidAction) {

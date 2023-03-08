@@ -44,11 +44,16 @@ class HomeViewModel: HomeViewModelInterface {
     init(interactor: HomeInteractorProtocol) {
         self.interactor = interactor
         currentCityList.append(contentsOf: interactor.getCitysLocal())
-        let nc = NotificationCenter.default
-        nc.addObserver(self, selector: #selector(updateCityList),
-                       name: NSNotification.Name(rawValue: CustomNotificationName.managedObjectContextDidSave.rawValue), object: nil)
+        registerObjectContextDidSave()
     }
-    
+
+    func registerObjectContextDidSave(action: VoidAction? = nil) {
+        interactor.registerObjectContextDidSave { [weak self] in
+            self?.updateCityList()
+            action?()
+        }
+    }
+
     func createWeatherDetailViewModel(city: String) -> WeatherDetailViewModel {
         let interactor = WeatherDetailInteractor(apiService: WeatherAPIService())
         return WeatherDetailViewModel(interactor, city: city)
@@ -117,7 +122,7 @@ class HomeViewModel: HomeViewModelInterface {
         viewState = .history
     }
 
-    @objc func updateCityList() {
+    func updateCityList() {
         currentCityList = interactor.getCitysLocal() // Get new local data after user go to Detail Screen
     }
 }

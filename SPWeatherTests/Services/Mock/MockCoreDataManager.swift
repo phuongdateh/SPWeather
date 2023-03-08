@@ -15,6 +15,7 @@ class MockCoreDataManager: CoreDataManagerInterface {
     var updatedCityName: String?
     var insertCityItemCalled = false
     var insertedCityName: String?
+    var objectContextDidSave: VoidAction?
 
     var mockCity: CityInfo?
 
@@ -45,5 +46,13 @@ class MockCoreDataManager: CoreDataManagerInterface {
     
     func save() {
         updateCityCalled = true
+    }
+    
+    func registerObjectContextDidSave(action: @escaping VoidAction) {
+        objectContextDidSave = action
+    }
+
+    func triggerObjectContextDidSave() {
+        objectContextDidSave?()
     }
 }
