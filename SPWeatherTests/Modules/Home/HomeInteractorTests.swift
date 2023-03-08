@@ -10,10 +10,12 @@ import XCTest
 
 class HomeInteractorTests: XCTestCase {
     lazy var mockApiService = WeatherApiServiceMock()
+    var mockCoreData: MockCoreDataManager!
     var interactor: HomeInteractor!
 
     override func setUp() {
-        interactor = HomeInteractor(service: mockApiService)
+        mockCoreData = MockCoreDataManager(container: MockCoreData(xctTestCase: self).getMockPersistantContainer())
+        interactor = HomeInteractor(service: mockApiService, coredataManager: mockCoreData)
     }
 
     override func tearDown() {
@@ -46,6 +48,17 @@ class HomeInteractorTests: XCTestCase {
         } failure: { _ in }
 
         waitForExpectations(timeout: 5, handler: nil)
+    }
+
+    func testManagedObjectContextDidSave() {
+        let expectation = expectation(description: "ObjectContextDidSave notification should be posted")
+
+        interactor.registerObjectContextDidSave {
+            expectation.fulfill()
+        }
+
+        mockCoreData.triggerObjectContextDidSave()
+        waitForExpectations(timeout: 2, handler: nil)
     }
 
     lazy var mockSearchData: SearchData = {
