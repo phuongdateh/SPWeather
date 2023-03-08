@@ -7,8 +7,12 @@ SPWeather is a weather app for iOS that provides weather information for differe
 - [x] 2. Design app's architecture used MVVM
 - [x] 3. Completed total 5 usecases
 - [x] 4. Write UnitTests 
-- [ ] 5. Write UITest
+- [x] 5. Write UITest
 - [x] 6. Readme file
+
+### Unit Test & UI Testing coverage 98%
+<img width="1145" alt="image" src="https://user-images.githubusercontent.com/19536343/223653811-51934aa8-bdd7-4eb8-b34a-e279b68ff8aa.png">
+
 
 ### Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
