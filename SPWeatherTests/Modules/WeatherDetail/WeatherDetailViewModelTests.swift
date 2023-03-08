@@ -25,7 +25,7 @@ class WeatherDetailViewModelTests: XCTestCase {
     }
 
     func testFetchWeatherSuccess() {
-        interactor.weatherData = MockData.weatherData
+        interactor.weatherData = WeatherDetailData.mock().data
         let expectedViewState: WeatherDetailViewModel.ViewState = .loaded
 
         viewModel.fetchWeather()
@@ -45,12 +45,24 @@ class WeatherDetailViewModelTests: XCTestCase {
     }
 
     func testDownloadIcon() {
-        interactor.weatherIconData = MockData.weatherIconData
-        viewModel.weatherData = MockData.weatherData
+        interactor.weatherIconData = Data(count: 10)
+        viewModel.weatherData = WeatherDetailData.mock().data
         let expectation = self.expectation(description: "Icon download completion")
 
         viewModel.downloadIcon { data in
             XCTAssertNotNil(data)
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
+    func testDownloadIconWithFailedData() {
+        viewModel.weatherData = nil
+        let expectation = self.expectation(description: "Icon download completion")
+
+        viewModel.downloadIcon { data in
+            XCTAssertNil(data)
             expectation.fulfill()
         }
 
@@ -67,55 +79,19 @@ class WeatherDetailViewModelTests: XCTestCase {
         XCTAssertEqual(attributedText, expectedAttributedText)
     }
 
+    func testDetailWeatherAttributedTextFullResult() {
+        viewModel.weatherData = WeatherDetailData.mock().data
+
+        XCTAssertNotNil(viewModel.detailWeatherAttributedText)
+    }
+
     func testContentAttributedTextWithError() {
         interactor.errorMessage = "Failed to fetch weather data"
         let expectedAttributedText = NSAttributedString(string: "Failed to fetch weather data")
 
         viewModel.fetchWeather()
-        let attributedText = viewModel.contentAttributedText()
+        let actualAttributedText = viewModel.contentAttributedText()
 
-        XCTAssertEqual(attributedText, expectedAttributedText)
+        XCTAssertEqual(actualAttributedText, expectedAttributedText)
     }
 }
-
-class MockWeatherDetailInteractor: WeatherDetailInteractorProtocol {
-    var weatherData: WeatherData?
-    var weatherIconData: Data?
-    var errorMessage: String?
-
-    func getWeather(cityName: String, success: @escaping WeatherDataAction, failure: @escaping StringAction) {
-        if let weatherData = weatherData {
-            success(weatherData)
-        } else if let errorMessage = errorMessage {
-            failure(errorMessage)
-        }
-    }
-
-    func getWeatherIcon(url: String, completion: @escaping DataAction) {
-        if let weatherIconData = weatherIconData {
-            completion(weatherIconData)
-        }
-    }
-}
-
-struct MockData {
-    static let weatherData = WeatherData.mock
-    static let weatherIconData = Data(count: 10)
-}
-
-extension WeatherData {
-    static var mock: WeatherData {
-        let cities: [City] = [
-            City(type: "city", query: "New York")
-        ]
-        let currentCondition: [CurrentCondition] = [
-            CurrentCondition(humidity: "29",
-                             tempC: "6",
-                             tempF: "22",
-                             weatherIconUrl: [CurrentCondition.Value(value: "https://www.google.com/icon.png")],
-                             weatherDesc: [CurrentCondition.Value(value: "Sunny")])
-        ]
-        return WeatherData(cities: cities, currentCondition: currentCondition)
-    }
-}
-

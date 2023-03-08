@@ -44,7 +44,7 @@ class WeatherDetailInteractorTests: XCTestCase {
 
     func testGetWeatherWithSuccessResponse() {
         let expectation = self.expectation(description: "success block should be called")
-        apiServiceMock.weatherData = WeatherData.mock
+        apiServiceMock.weatherData = WeatherDetailData.mock().data
 
         sut.getWeather(cityName: "London") { data in
             XCTAssertTrue(data.cities.isEmpty == false)
